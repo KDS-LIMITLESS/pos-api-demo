@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "dev": "nodemon --watch './**/*' --exec 'ts-node' ./src/server.ts"
+    "dev": "nodemon --watch './**/*' --exec 'ts-node' ./src/server.ts",
+    "build": "tsc -p ."
   },
   "keywords": [],
   "author": "",
