@@ -5,10 +5,23 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint .",
+    "eslint": "./pre-commit",
     "dev": "nodemon --watch './**/*' --exec 'ts-node' ./src/server.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+
+    "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"  
   },
+  "husky":{
+    "hooks": {
+      "pre-commit": "npm run pretest"
+    }
+  },
+  "pre-commit": ["eslint", "test"],
+
+  "lint-staged":{
+    "*.{js, ts, json}": ["./node_modules/.bin/eslint --fix", "git-add"]
+  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -25,6 +38,11 @@
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-node": "^11.1.0",
+<<<<<<< HEAD
+=======
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
+>>>>>>> master
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.3"

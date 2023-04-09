@@ -4,3 +4,22 @@ services:
     build: .
     ports:
       - "5000:3000"
+  
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 5E^&()VB78954!@PG
+      POSTGRES_USER: rms
+      POSTGRES_INITDB_ARGS: --auth=scram-sha-256
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - rms-db:/home/docker/volumes
+volumes:
+  rms-db:
+    name: "rms-app-db"
