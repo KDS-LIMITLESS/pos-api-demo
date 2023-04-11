@@ -8,26 +8,31 @@
     "eslint": "./pre-commit",
     "dev": "nodemon --watch './**/*' --exec 'ts-node' ./src/server.ts",
     "build": "tsc -p .",
-
-    "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"  
+    "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
   },
-  "husky":{
+  "husky": {
     "hooks": {
       "pre-commit": "npm run pretest"
     }
   },
-  "pre-commit": ["eslint", "test"],
-
-  "lint-staged":{
-    "*.{js, ts, json}": ["./node_modules/.bin/eslint --fix", "git-add"]
+  "pre-commit": [
+    "eslint",
+    "test"
+  ],
+  "lint-staged": {
+    "*.{js, ts, json}": [
+      "./node_modules/.bin/eslint --fix",
+      "git-add"
+    ]
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "knex": "^2.4.2",
+    "pg": "^8.10.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",

@@ -4,6 +4,10 @@ services:
     build: .
     ports:
       - "5000:3000"
+    volumes:
+      - ./:/rms
+    depends_on:
+      - db
   
   db:
     image: postgres
@@ -12,6 +16,8 @@ services:
       POSTGRES_PASSWORD: 5E^&()VB78954!@PG
       POSTGRES_USER: rms
       POSTGRES_INITDB_ARGS: --auth=scram-sha-256
+    ports:
+      - "15432:5432"
   
   adminer:
     image: adminer
@@ -19,7 +25,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - rms-db:/home/docker/volumes
+      - rms-db:/usr/docker/volumes
 volumes:
   rms-db:
     name: "rms-app-db"

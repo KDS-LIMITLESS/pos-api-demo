@@ -1,18 +1,16 @@
 FROM node:lts-alpine
 
-WORKDIR /usr/src/RMS
+WORKDIR /rms
 
 COPY ["package.json", "package-lock.json*", "tsconfig.json",  "./"]
 
 RUN npm install 
 
-COPY . .
+COPY . ./rms
 
 EXPOSE 3000
 
-RUN chown -R node /usr/src/RMS
-
-USER node
+RUN chown -R node /rms
 
 CMD ["npm", "run", "dev"]
 
