@@ -1,5 +1,6 @@
-import knex from "knex"
-import { config } from './knexfile'
+import { QueryResult } from 'pg'
+import { pool as db } from './connection'
+import SQL from 'sql-template-strings'
 
 export enum UserRoles {
     Admin,
@@ -7,34 +8,53 @@ export enum UserRoles {
     Standard,
 }
 
-
 export interface IUser {
     full_name: string,
     email: string,
-    pwdHash: string,
+    password: string,
     role: UserRoles,
     phone_number: string
+} 
+
+
+interface IQueryResult<R extends any[] = IUser[] > extends  QueryResult {
+    rows: R
 }
 
-const db = knex(config.development)
-
 export class UserModel{
-    /**
+	/**
      * 
-     * @param user full_name,email,pwdHash,role,phone_number
+     * @param user full_name,email,password,role,phone_number
      * @returns user
      */
-    async newUser(user: IUser): Promise<IUser> {
-        return db('users').insert<IUser>(user)
-    }
+	async newUser(user: IUser) {
+		let newUser = await db.query(SQL `INSERT INTO 
+            users(
+                full_name, 
+                email, 
+                password, 
+                role, 
+                phone_number
+            ) 
+            VALUES (
+                ${user.full_name},
+                ${user.email}, 
+                ${user.password}, 
+                ${user.role}, 
+                ${user.phone_number}
+            )`
+        )
+        console.log(newUser.rows)
+        return newUser.rows
+	}
 
-    /**
+	/**
      * Check if given email exists in database
      * @param email string
-     * @returns IUser
+     * @returns boolean
      */
-    async isUser(email:string): Promise<IUser> {
-        return db('users').select<IUser>('email')
-        .where({email})
-    }
+	async isUserExist(email: IUser['email']): Promise<boolean> {
+		return (await db.query(`SELECT * FROM users 
+            WHERE email = $1`, [email])).rowCount === 1
+	}
 }

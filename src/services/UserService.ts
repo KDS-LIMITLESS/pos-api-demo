@@ -1,17 +1,17 @@
 import { UserModel, IUser } from '../models/users';
+import DefaultAppConstants from '../app-constants/custom';
 
 
 const _uM = new UserModel();
 
-const USER_EXISTS = 'An account with email already exists';
-
-
 async function createUser(user:IUser): Promise<any>{
-	const findUser = await _uM.isUser(user.email);
-	if (findUser) return USER_EXISTS; // write custom error handler class
-	return _uM.newUser(user);
+	if (await _uM.isUserExist(user.email) ) {
+		console.log("User Already Exists. An Error is Expected ")
+		return DefaultAppConstants.USER_EXISTS;
+	};
+	_uM.newUser(user);
+	return user
 }
-
 
 
 export default  {

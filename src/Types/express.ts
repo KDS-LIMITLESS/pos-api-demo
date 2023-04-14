@@ -3,6 +3,8 @@ import { Query } from 'express-serve-static-core';
 import { IUser } from '../models/users';
 
 
+export declare type UserSessionResponse = Omit<IUser, 'password'>
+
 export interface IReq<T = any> extends e.Request {
     body: T
 }
