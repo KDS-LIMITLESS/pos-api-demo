@@ -1,8 +1,11 @@
 import * as e from 'express';
 import { Query } from 'express-serve-static-core';
+import { IUser } from '../models/users';
 
 
-export interface IReq<T = void> extends e.Request {
+export declare type UserSessionResponse = Omit<IUser, 'password'>
+
+export interface IReq<T = any> extends e.Request {
     body: T
 }
 
@@ -11,9 +14,19 @@ export interface IReqQuery<Q extends Query > extends e.Request {
 }
 
 /**
+ * User response session
+ */
+export interface ISessionUser {
+    full_name: string,
+    email: string,
+    role: IUser['role']
+}
+
+/**
  * Response object type
  */
-export interface IResponseObject {
-    message: string | '',
-    data?: object
+export interface IRes extends e.Response {
+    locals: {
+        sessionUser?: ISessionUser
+    }
 }
