@@ -1,6 +1,6 @@
-import { QueryResult } from 'pg'
-import { pool as db } from './connection'
-import SQL from 'sql-template-strings'
+import { QueryResult } from 'pg';
+import { pool as db } from './connection';
+import SQL from 'sql-template-strings';
 
 export enum UserRoles {
     Admin,
@@ -28,7 +28,7 @@ export class UserModel{
      * @returns user
      */
 	async newUser(user: IUser) {
-		let newUser = await db.query(SQL `INSERT INTO 
+		const newUser = await db.query(SQL `INSERT INTO 
             users(
                 full_name, 
                 email, 
@@ -43,9 +43,9 @@ export class UserModel{
                 ${user.role}, 
                 ${user.phone_number}
             )`
-        )
-        console.log(newUser.rows)
-        return newUser.rows
+		);
+		console.log(newUser.rows);
+		return newUser.rows;
 	}
 
 	/**
@@ -55,6 +55,6 @@ export class UserModel{
      */
 	async isUserExist(email: IUser['email']): Promise<boolean> {
 		return (await db.query(`SELECT * FROM users 
-            WHERE email = $1`, [email])).rowCount === 1
+            WHERE email = $1`, [email])).rowCount === 1;
 	}
 }

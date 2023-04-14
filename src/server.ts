@@ -1,13 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import * as dotenv from 'dotenv'
+import * as dotenv from 'dotenv';
 
 
 const app = express();
 
 app.use(express.json());
 app.use(cors()); // add more security checks to cors 
-dotenv.config()
+dotenv.config();
 
 app.use('/api', require('./routes'));
 

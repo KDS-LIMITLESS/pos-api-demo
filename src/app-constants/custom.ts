@@ -6,4 +6,4 @@ enum DefaultAppConstants  {
     USER_EXISTS = 'An account with email already exists'
 
 }
-export default DefaultAppConstants
+export default DefaultAppConstants;
