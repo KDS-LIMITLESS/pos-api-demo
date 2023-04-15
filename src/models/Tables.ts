@@ -16,4 +16,15 @@ export class CreateTable {
 				console.log('Created Users Table');
 			});
 	}
+	async createResturantTable(): Promise<void> {
+		return db.query(`CREATE TABLE IF NOT EXISTS users (
+            email VARCHAR PRIMARY KEY NOT NULL,
+            full_name VARCHAR NOT NULL,
+            pwdHash VARCHAR NOT NULL,
+            phone_number VARCHAR NOT NULL
+        )`)
+			.then(function() {
+				console.log('Created Users Table');
+			});
+	}
 }
