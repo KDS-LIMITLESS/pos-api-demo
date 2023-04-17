@@ -29,11 +29,11 @@
             }
         ],
         "indent": [
-            "error",
-            "tab"
+            "warn",
+            2
         ],
         "linebreak-style": [
-            "error",
+            "warn",
             "unix"
         ],
         "node/no-process-env" : 1,
@@ -42,11 +42,11 @@
             { "ignores" : ["modules"] }
           ],
         "quotes": [
-            "error",
+            "warn",
             "single"
         ],
         "semi": [
-            "error",
+            "warn",
             "always"
         ]
     }
