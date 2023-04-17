@@ -7,12 +7,29 @@ import UserService from '../services/UserService';
 
 export default class UserControllers {
 
-  async create (req:IReq<IUser>, res: IRes) {
+  async create (req:IReq, res: IRes) {
     const user:IUser = req.body;
+    if (instanceOfUser(user)){
       await UserService.createUser(user);
-		return res.status(HttpStatusCodes.OK).json({user});
-	}
+		  return res.status(HttpStatusCodes.OK).json({user});
+	  }
+    res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED)
+  }
 }
 
+/**
+ * Check if incoming request is a type of IUser
+ * @param object object payload to check against the interface
+ * @returns boolean
+ */
+function instanceOfUser(object: any): object is IUser {
+  return (
+    'email' && 
+    'full_name' && 
+    'role' && 
+    'password' && 
+    'phone_number'  in object
+  )
+}
 // beware ts is not typesafe at runtime perfom some valiation
 
