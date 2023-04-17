@@ -1,9 +1,11 @@
-enum DefaultAppConstants  {
+enum AppConstants  {
 
     /**
-     * The server is unable to find a user with specified email
+     * The specified email already exists in the server
      */
-    USER_EXISTS = 'An account with email already exists'
+    USER_EXISTS = 'An account with email already exists',
+
+    BAD_INPUT_FILED = 'Incorrect or incomplete input fields'
 
 }
-export default DefaultAppConstants;
+export default AppConstants;
