@@ -53,8 +53,8 @@ export class RestaurantModel{
 		[
 			restaurant.restaurant_id,
 			restaurant.business_name,
-			restaurant.phone_number,
-      restaurant.verification_status,
+		    restaurant.phone_number,
+            restaurant.verification_status,
 			restaurant.admin
 		]
 		);
@@ -74,7 +74,7 @@ export class RestaurantModel{
 			'SELECT * FROM restaurants WHERE restaurant_id = $1', [id]
 		);
 
-		return (rows.length ? rows[0] : null);
+		return (rows ? rows[0] : null);
 	}
 
 	/**
@@ -99,7 +99,7 @@ export class RestaurantModel{
 				restaurant.business_name,
 				restaurant.phone_number,
 				restaurant.verification_status,
-        restaurant.admin
+                restaurant.admin
 			]
 		);
 

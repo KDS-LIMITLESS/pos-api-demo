@@ -1,73 +1,43 @@
-import { Pool } from 'pg';
 import { 
 	IRestaurant,
 	IRestaurantOpt,
 	RestaurantModel
 } from '../models/restaurants';
+import { LogError } from '../utils/errors';
+import HttpStatusCodes from '../app-constants/HttpStatusCodes';
+import AppConstants from '../app-constants/custom';
 
+const _rM = new RestaurantModel();
 
-export class RestaurantService {
-
-	public constructor(private pool: Pool) {}
-
-	public async createRestaurant
-	(restaurant: IRestaurant): Promise<IRestaurant>
-	{
-		const client = await this.pool.connect();
-
-		try {
-			const restaurantModel = new RestaurantModel(client);
-			return (await restaurantModel.create(restaurant));
-		} finally {
-			client.release();
-		}
-
-	}
-
-
-	public async getRestaurant
-	(email: IRestaurant['email']): Promise<IRestaurant | null> 
-	{
-		const client = await this.pool.connect();
-
-		try {
-			const restaurantModel = new RestaurantModel(client);
-			return (await restaurantModel.get(email));
-		} finally {
-			client.release();
-		}
-
-	}
-
-
-	public async updateRestaurant
-	(restaurant: IRestaurantOpt): Promise<IRestaurant | null>
-	{
-		const client = await this.pool.connect();
-
-		try {
-			const restaurantModel = new RestaurantModel(client);
-			return (await restaurantModel.update(restaurant));
-		} finally {
-			client.release();
-		}
-
-	}
-
-
-	public async deleteRestaurant
-	(email: IRestaurant['email']): Promise<boolean>
-	{
-		const client = await this.pool.connect();
-
-		try {
-			const restaurantModel = new RestaurantModel(client);
-			return (await restaurantModel.delete(email));
-		} finally {
-			client.release();
-		}
-
-	}
-
+async function createRestaurant(restaurant: IRestaurant): 
+  Promise<IRestaurant>	{
 
 }
+
+
+
+
+async function getRestaurant (id: IRestaurant['restaurant_id']): 
+Promise<IRestaurant | null>	{
+
+}
+
+
+async function updateRestaurant
+	(restaurant: IRestaurantOpt): Promise<IRestaurant | null> {
+
+}
+
+
+async function deleteRestaurant(id: IRestaurant['restaurant_id']): 
+Promise<boolean> {
+
+}
+
+export default  {
+  createRestaurant,
+  getRestaurant,
+  updateRestaurant,
+  deleteRestaurant
+} as const;
+

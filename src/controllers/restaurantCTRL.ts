@@ -1,106 +1,81 @@
 import { IReq, IRes } from '../Types/express';
 import HttpStatusCodes from '../app-constants/HttpStatusCodes';
+import AppConstants from '../app-constants/custom';
 import { IRestaurant, IRestaurantOpt } from '../models/restaurants';
-import { pool as db } from '../models/connection';
-import { RestaurantService } from '../services/restaurantService';
+import RestaurantService from '../services/restaurantService';
 
 
-const restaurantService = new RestaurantService(db);
 
 export default class RestaurantControllers {
 
-	public async createRestaurant(req: IReq<IRestaurant>, res: IRes) {
+  public async createRestaurant(req: IReq, res: IRes) {
 
-		try {
-			const restaurantSrc : IRestaurant = req.body;
-			const restaurant = await restaurantService.createRestaurant(
-				restaurantSrc
-			);
+    const restaurantSrc : IRestaurant = req.body;
 
-			res.status(HttpStatusCodes.CREATED).json(restaurant);
-		} catch (error) {
-			console.error(error);
-			res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(
-				{message: 'Server error'}
-			);
-		}
-	}
+    if (instanceOfRestaurant(restaurantSrc)) {
 
+      const restaurant = await RestaurantService.createRestaurant(
+        restaurantSrc
+      );
 
-	public async getRestaurant (req:IReq<IRestaurant['email']>, res: IRes) {
+      res.status(HttpStatusCodes.CREATED).json(restaurant);
+    }
 
-		try {
-			const email : IRestaurant['email'] = req.body;
-			const restaurant = await restaurantService.getRestaurant(
-				email
-			);
-
-			if (!restaurant) {
-				res.status(HttpStatusCodes.NOT_FOUND).json(
-					{message: 'Restaurant Not Found'}
-				);
-			} else {
-				res.status(HttpStatusCodes.OK).json(restaurant);
-			}
-		} catch (error) {
-			console.error(error);
-			res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(
-				{message: 'Server error'}
-			);
-		}
-
-	}
+    res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
+  }
 
 
-	public async updateRestaurant (req:IReq<IRestaurantOpt>, res: IRes) {
+  public async getRestaurant (req: IReq, res: IRes) {
 
-		try {
-			const updatedRestaurant = req.body;
-			const newRestaurant = await restaurantService.updateRestaurant(
-				updatedRestaurant
-			);
+    const id : IRestaurant['restaurant_id'] = req.body;
 
-			if (!newRestaurant) {
-				res.status(HttpStatusCodes.NOT_FOUND).json(
-					{message: 'Restaurant Not Found'}
-				);
-			} else {
-				res.status(HttpStatusCodes.OK).json(newRestaurant);
-			}
-		} catch (error) {
-			console.error(error);
-			res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(
-				{message: 'Server error'}
-			);
-		}
+    if(typeof(id) !== 'string') {
+      res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
+    }
 
-	}
+    const restaurant = await RestaurantService.getRestaurant(id);
+    res.status(HttpStatusCodes.OK).json(restaurant);
+  }
 
 
-	public async deleteRestaurant (req:IReq<IRestaurant['email']>, res: IRes) {
+  public async updateRestaurant (req: IReq, res: IRes) {
 
-		try {
-			const email : IRestaurant['email'] = req.body;
-			const success = await restaurantService.deleteRestaurant(
-				email
-			);
+    const updatedRestaurant = req.body;
 
-			if (success) {
-				res.sendStatus(HttpStatusCodes.NO_CONTENT);
-			} else {
-				res.status(HttpStatusCodes.NOT_FOUND).json(
-					{message: 'Restaurant Not Found'}
-				);
-			}
-		} catch (error) {
-			console.error(error);
-			res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json(
-				{message: 'Server error'}
-			);
-		}
+    if (instanceOfRestaurant(updatedRestaurant)) {
 
-	}
+      const newRestaurant = await RestaurantService.updateRestaurant(
+        updatedRestaurant
+      );
+      res.status(HttpStatusCodes.OK).json(newRestaurant);
+    }
+  }
+
+
+  public async deleteRestaurant (req: IReq, res: IRes) {
+
+    const id : IRestaurant['restaurant_id'] = req.body.restaurant_id;
+    if(typeof(id) !== 'string') {
+      res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
+    }
+
+    const success = await RestaurantService.deleteRestaurant(id);
+    if (success) res.sendStatus(HttpStatusCodes.NO_CONTENT);
+  }
 }
-
+/**
+* Check if incoming request is a type of IUser
+* @param object object to check against the interface
+* @returns boolean
+*/
+function instanceOfRestaurant(object: any): object is IRestaurant {
+  return (
+    'restaurant_id' && 
+      'business_name' && 
+      'phone_number' && 
+      'verification_status' && 
+      'admin'  in object
+  )
+}
 // beware ts is not typesafe at runtime perfom some valiation
 
