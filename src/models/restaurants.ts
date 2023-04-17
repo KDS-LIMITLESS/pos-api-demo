@@ -1,20 +1,26 @@
-import { PoolClient } from 'pg';
 import SQL from 'sql-template-strings';
+import { pool as db } from './connection';
 
+enum VerificationStatus {
+  VERIFIED,
+  PENDING
+}
 
 export interface IRestaurant {
-    full_name: string,
-    email: string,
-    password: string,
-    phone_number: string
+  restaurant_id: string,
+  business_name: string,
+  phone_number: string,
+  verification_status: VerificationStatus,
+  admin: string
 }
 
 
 export interface IRestaurantOpt {
-    full_name?: string,
-    email: string,
-    password?: string,
-    phone_number?: string
+  restaurant_id: string,
+  business_name?: string,
+  phone_number?: string,
+  verification_status?: VerificationStatus,
+  admin?: string
 }
 
 
@@ -22,32 +28,34 @@ export interface IRestaurantOpt {
 
 export class RestaurantModel{
 
-	public constructor(private client: PoolClient) {}
 
 	/**
    Creates a new Resturant
-   @param: details of resturant to be created
-   @returns IRestaurant
+   @param: business_name, phone_number, restaurant_id, verification_status, admin
+   @returns Restaurant
   */
 	public async create(restaurant: IRestaurant): Promise<IRestaurant> {
-		const { rows } = await this.client.query<IRestaurant>(SQL `INSERT INTO 
+		const { rows } = await db.query<IRestaurant>(SQL `INSERT INTO 
             restaurants(
-                full_name, 
-                email, 
-                password, 
+                restaurant_id,
+                business_name, 
+                phone_number, 
+                verification_status,
                 phone_number
             ) 
             VALUES (
                 $1,
                 $2,
                 $3,
-                $4
+                $4,
+                $5
             ) RETURNING *`,
 		[
-			restaurant.email,
-			restaurant.full_name,
-			restaurant.password,
-			restaurant.phone_number
+			restaurant.restaurant_id,
+			restaurant.business_name,
+			restaurant.phone_number,
+      restaurant.verification_status,
+			restaurant.admin
 		]
 		);
 		return (rows[0]);
@@ -55,45 +63,43 @@ export class RestaurantModel{
 
 
 	/**
-     * gets a Restaurant's details
-     * @param email string
-     * @returns IRestaurant
+     * gets a Restaurant's details if it exists
+     * @param restaurant_id
+     * @returns Restaurant or null
      */
 
-	public async get 
-	(email: IRestaurant['email']): Promise<IRestaurant | null>
-	{
-		const { rows } = await this.client.query<IRestaurant>(
-			'SELECT * FROM restaurants WHERE email = $1', [email]
+	public async get(id: IRestaurant['restaurant_id']): 
+  Promise<IRestaurant | null> {
+		const { rows } = await db.query<IRestaurant>(
+			'SELECT * FROM restaurants WHERE restaurant_id = $1', [id]
 		);
 
 		return (rows.length ? rows[0] : null);
 	}
 
 	/**
-     * Update a Restaurant
-     * @param details that can be updated
+     * Update a Restaurant details
+     * @param restaurant_id, business_name (optional), phone_number (optional),
+     * verification_status (optional), admin (optional)
      * @returns IRestaurant
      */
 
-	public async update
-	(restaurant: IRestaurantOpt): Promise<IRestaurant | null>
-	{
-		const resturant = this.get(restaurant.email);
-		if(!resturant) return (null);
-
-		const { rows } = await this.client.query<IRestaurant>(
+	public async update(restaurant: IRestaurantOpt): 
+  Promise<IRestaurant | null> {
+		const { rows } = await db.query<IRestaurant>(
 			`UPDATE restaurants
-                      SET full_name = COALESCE($2, full_name),
-                      password = COALESCE($3, password),
-                      phone_number = COALESCE($4, phone_number)
-                      WHERE email = $1
+                      SET business_name = COALESCE($2, business_name),
+                      phone_number = COALESCE($3, phone_number),
+                      verification_status = COALESCE($4, verification_status)
+                      admin = COALESCE($5, admin)
+                      WHERE restaurant_id = $1
                       RETURNING *`,
 			[
-				restaurant.email,
-				restaurant.full_name,
-				restaurant.password,
-				restaurant.phone_number
+				restaurant.restaurant_id,
+				restaurant.business_name,
+				restaurant.phone_number,
+				restaurant.verification_status,
+        restaurant.admin
 			]
 		);
 
@@ -103,16 +109,15 @@ export class RestaurantModel{
   
 	/**
      * Delete a resturant
-     * @param email string
+     * @param restaurant_id
      * @returns boolean
      */
 
-	public async delete
-	(email: IRestaurant['email']): Promise<boolean>
+	public async delete(id: IRestaurant['restaurant_id']): Promise<boolean>
 	{
-		const { rowCount } = await this.client.query(
-			'DELETE FROM restaurants WHERE email = $1',
-			[email]
+		const { rowCount } = await db.query(
+			'DELETE FROM restaurants WHERE restaurant_id = $1',
+			[id]
 		);
 
 		return (rowCount == 1);
