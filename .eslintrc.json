@@ -30,7 +30,7 @@
         ],
         "indent": [
             "warn",
-            "tab"
+            2
         ],
         "linebreak-style": [
             "warn",
