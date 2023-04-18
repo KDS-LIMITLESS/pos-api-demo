@@ -21,13 +21,12 @@ export default class RestaurantControllers {
       res.status(HttpStatusCodes.CREATED).json(restaurant);
     }
 
-    res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
   }
 
 
   public async getRestaurant (req: IReq, res: IRes) {
 
-    const id : IRestaurant['restaurant_id'] = req.body;
+    const id : IRestaurant['restaurant_id'] = req.body.restaurant_id;
 
     if(typeof(id) !== 'string') {
       res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
@@ -58,7 +57,6 @@ export default class RestaurantControllers {
     if(typeof(id) !== 'string') {
       res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
     }
-
     const success = await RestaurantService.deleteRestaurant(id);
     if (success) res.sendStatus(HttpStatusCodes.NO_CONTENT);
   }

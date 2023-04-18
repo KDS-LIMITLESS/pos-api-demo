@@ -1,16 +1,18 @@
 import SQL from 'sql-template-strings';
 import { pool as db } from './connection';
+import AppConstants from '../app-constants/custom';
 
-enum VerificationStatus {
-  VERIFIED,
-  PENDING
+
+export enum VerificationStatus {
+  VERIFIED = 'VERIFIED',
+  PENDING = 'PENDING'
 }
 
 export interface IRestaurant {
   restaurant_id: string,
   business_name: string,
   phone_number: string,
-  verification_status: VerificationStatus,
+  verification_status: string,
   admin: string
 }
 
@@ -19,7 +21,7 @@ export interface IRestaurantOpt {
   restaurant_id: string,
   business_name?: string,
   phone_number?: string,
-  verification_status?: VerificationStatus,
+  verification_status?: string,
   admin?: string
 }
 
@@ -28,6 +30,21 @@ export interface IRestaurantOpt {
 
 export class RestaurantModel{
 
+	/**
+   Generates an ID
+   @param: null
+   @returns new id
+  */
+private generateId(): string {
+  const idLength = 6;
+  const characters : string = AppConstants.ID_CHARS;
+  let id : string = '';
+  for (let i = 0; i < idLength; i++) {
+    const index = Math.floor(Math.random() * characters.length);
+    id += characters[index];
+  }
+  return id;
+}
 
 	/**
    Creates a new Resturant
@@ -41,7 +58,7 @@ export class RestaurantModel{
                 business_name, 
                 phone_number, 
                 verification_status,
-                phone_number
+                admin
             ) 
             VALUES (
                 $1,
@@ -51,10 +68,10 @@ export class RestaurantModel{
                 $5
             ) RETURNING *`,
 		[
-			restaurant.restaurant_id,
+			this.generateId(),
 			restaurant.business_name,
 		    restaurant.phone_number,
-            restaurant.verification_status,
+            VerificationStatus.PENDING,
 			restaurant.admin
 		]
 		);
@@ -85,12 +102,12 @@ export class RestaurantModel{
      */
 
 	public async update(restaurant: IRestaurantOpt): 
-  Promise<IRestaurant | null> {
+  Promise<IRestaurant> {
 		const { rows } = await db.query<IRestaurant>(
 			`UPDATE restaurants
                       SET business_name = COALESCE($2, business_name),
                       phone_number = COALESCE($3, phone_number),
-                      verification_status = COALESCE($4, verification_status)
+                      verification_status = COALESCE($4, verification_status),
                       admin = COALESCE($5, admin)
                       WHERE restaurant_id = $1
                       RETURNING *`,
