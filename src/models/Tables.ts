@@ -2,18 +2,18 @@ import { pool as db } from './connection';
 
 
 
-export class CreateTable {
+class CreateTable {
 
   async createUserTable(): Promise<void> {
     return db.query(`CREATE TABLE IF NOT EXISTS users (
         email VARCHAR PRIMARY KEY NOT NULL,
-        full_name VARCHAR NOT NULL,
+        username VARCHAR NOT NULL,
         pwdHash VARCHAR NOT NULL,
-        role VARCHAR NOT NULL,
-        phone_number VARCHAR NOT NULL
+        role VARCHAR NOT NULL
     )`)
       .then(function() {
         console.log('Created Users Table');
       });
   }
 }
+export const tables = new CreateTable()

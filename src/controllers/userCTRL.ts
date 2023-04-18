@@ -1,9 +1,10 @@
-import { IReq, IRes} from '../Types/express';
+import { IReq, IRes, UserLogin} from '../Types/express';
 import HttpStatusCodes from '../app-constants/HttpStatusCodes';
 import AppConstants from '../app-constants/custom';
 import { IUser} from '../models/users';
 
 import UserService from '../services/UserService';
+
 
 export default class UserControllers {
 
@@ -14,6 +15,12 @@ export default class UserControllers {
 		  return res.status(HttpStatusCodes.OK).json({user});
 	  }
     res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED)
+  }
+
+  async login (req:IReq, res:IRes) {
+    
+    const user:UserLogin = req.body
+    await UserService.login(user)
   }
 }
 
