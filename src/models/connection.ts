@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
+import { CreateTable } from './Tables';
 
 dotenv.config();
 
@@ -10,7 +11,6 @@ export const pool = new Pool({
   idleTimeoutMillis: 10000,
   connectionTimeoutMillis: 10000,
 });
-
 
 pool.on('connect', function(client) {
   console.log('Connected to database', pool.totalCount);
