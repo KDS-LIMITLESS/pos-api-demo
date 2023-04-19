@@ -12,7 +12,6 @@ export const pool = new Pool({
   connectionTimeoutMillis: 10000,
 });
 
-
 pool.on('connect', function(client) {
   console.log('Connected to database', pool.totalCount);
 });
