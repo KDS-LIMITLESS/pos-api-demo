@@ -6,9 +6,8 @@ import { IUser } from '../models/users';
 
 export declare type UserSessionResponse = Omit<IUser, 'password'>
 
-export interface IReq<T = any, U = any > extends e.Request {
-    body: T
-    user: U
+export interface IReq<T = any> extends e.Request {
+    body: T   
 }
 
 export interface IReqQuery<Q extends Query > extends e.Request {
@@ -33,7 +32,7 @@ export interface IRes extends e.Response {
     }
 }
 
-export type UserLogin = Pick<IUser, 'pwdHash' | 'email'>
+export type UserLogin = Pick<IUser, 'password' | 'email'>
 
 export type UserSession = Pick<IUser, 'username' | 'role'>
 

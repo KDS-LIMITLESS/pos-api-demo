@@ -20,7 +20,8 @@ export default class UserControllers {
   async login (req:IReq, res:IRes) {
     
     const user:UserLogin = req.body
-    await UserService.login(user)
+    let userToken = await UserService.login(user)
+    res.status(HttpStatusCodes.OK).json(userToken)
   }
 }
 
@@ -32,11 +33,8 @@ export default class UserControllers {
 function instanceOfUser(object: any): object is IUser {
   return (
     'email' && 
-    'full_name' && 
+    'username' && 
     'role' && 
-    'password' && 
-    'phone_number'  in object
+    'password' in object
   )
 }
-// beware ts is not typesafe at runtime perfom some valiation
-

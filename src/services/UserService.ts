@@ -10,7 +10,7 @@ import { UserLogin, UserSession } from '../Types/express';
 const _uM = new UserModel();
 
 async function createUser(user:IUser): Promise<any>{
-  if (await _uM.isUserExist(user.email) ) {
+  if (await _uM.isUserExist(user.email)) {
     throw new LogError(
       HttpStatusCodes.BAD_REQUEST, 
       AppConstants.USER_EXISTS);
@@ -20,13 +20,16 @@ async function createUser(user:IUser): Promise<any>{
 }
 
 async function login(user:UserLogin) {
-  if (
-    await _uM.isUserExist(user.email) && 
-    await _uM.compareUserPwd(user.pwdHash) 
-  ){
-    //const _user = await tokens.generateToken(, user.role)
-    //return _user
-  }
+  
+  let isUser = await _uM.isUserExist(user.email) 
+  let isUserPWD = await _uM.compareUserPwd(user.password, user.email) 
+  
+  if (isUser && isUserPWD) {
+    return await tokens.generateToken(
+      isUserPWD.username, 
+      isUserPWD.role
+    )
+  } 
   throw new LogError(
     HttpStatusCodes.BAD_REQUEST,
     AppConstants.INVALID_LOGIN_DETAILS
