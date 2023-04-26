@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
-import { CreateTable } from './Tables';
+import { tables } from './Tables';
 
 dotenv.config();
 

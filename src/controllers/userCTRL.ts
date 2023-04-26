@@ -1,9 +1,10 @@
-import { IReq, IRes} from '../Types/express';
+import { IReq, IRes, UserLogin} from '../Types/express';
 import HttpStatusCodes from '../app-constants/HttpStatusCodes';
 import AppConstants from '../app-constants/custom';
 import { IUser} from '../models/users';
 
 import UserService from '../services/UserService';
+
 
 export default class UserControllers {
 
@@ -15,6 +16,13 @@ export default class UserControllers {
 	  }
     res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED)
   }
+
+  async login (req:IReq, res:IRes) {
+    
+    const user:UserLogin = req.body
+    let userToken = await UserService.login(user)
+    res.status(HttpStatusCodes.OK).json(userToken)
+  }
 }
 
 /**
@@ -25,11 +33,8 @@ export default class UserControllers {
 function instanceOfUser(object: any): object is IUser {
   return (
     'email' && 
-    'full_name' && 
+    'username' && 
     'role' && 
-    'password' && 
-    'phone_number'  in object
+    'password' in object
   )
 }
-// beware ts is not typesafe at runtime perfom some valiation
-
