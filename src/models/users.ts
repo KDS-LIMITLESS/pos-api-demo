@@ -1,6 +1,7 @@
 import { QueryResult } from 'pg';
 import { pool as db } from './connection';
 import SQL from 'sql-template-strings';
+import bcrypt from 'bcrypt'
 
 export enum UserRoles {
   Admin,
@@ -9,43 +10,45 @@ export enum UserRoles {
 }
 
 export interface IUser {
-  full_name: string,
+  username: string,
   email: string,
   password: string,
-  role: UserRoles,
-  phone_number: string
+  role?: UserRoles,
 } 
 
 
-interface IQueryResult<R extends any[] = IUser[] > extends  QueryResult {
-  rows: R
-}
-
 export class UserModel{
+
   /**
   * 
-  * @param user full_name,email,password,role,phone_number
+  * @param user full_name,email,password,role
   * @returns user
   */
-  async newUser(user: IUser) {
-    const newUser = await db.query(SQL `INSERT INTO 
+  async newUser(user: IUser): Promise<IUser>{
+    let pwdHash = await bcrypt.hash(user.password, 12)
+    const { rows } = await db.query(SQL `INSERT INTO 
       users(
-        full_name, 
+        username, 
         email, 
-        password, 
-        role, 
-        phone_number
+        pwdhash, 
+        role
       ) 
       VALUES (
-        ${user.full_name},
+        ${user.username},
         ${user.email}, 
-        ${user.password}, 
-        ${user.role}, 
-        ${user.phone_number}
+        ${pwdHash}, 
+        ${UserRoles[0]}
       )`
     );
-    console.log(newUser.rows);
-    return newUser.rows;
+    console.log(rows)
+    return rows[0] || null
+  }
+
+  async compareUserPwd(pwd: string, email?: string): Promise<IUser> {
+    const { rows } = await db.query('SELECT * FROM users WHERE email = $1', [email])
+    const checkPSW = await bcrypt.compare(pwd, rows[0]['pwdhash'])
+    console.log(checkPSW)
+    return checkPSW === true ? rows[0] : null
   }
 
   /**
