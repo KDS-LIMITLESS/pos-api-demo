@@ -1,0 +1,70 @@
+version: "3.9"
+services:
+  rm:
+    build: 
+      context: ./RM
+    ports:
+      - "5000:3000"
+    volumes:
+      - ./RM:/rm
+    depends_on:
+      - db
+    deploy:
+      restart_policy:
+        max_attempts: 3
+        condition: on-failure
+  
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 5E^&()VB78954!@PG
+      POSTGRES_USER: rms
+      POSTGRES_INITDB_ARGS: --auth=scram-sha-256
+    ports:
+      - "15432:5432"
+    volumes:
+      - rms-db:/usr/docker/volumes
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+  
+  pos:
+    build:
+      context: ./POS
+    ports:
+      - "5050: 5050"
+    volumes:
+      - ./POS:/pos
+    depends_on:
+      - mongo
+    
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: pos
+      MONGO_INITDB_ROOT_PASSWORD: 5e890*^[]!
+    volumes:
+      - pos-db:/data/db
+  
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: POS
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 5e890*^[]!
+      ME_CONFIG_MONGODB_URL: mongodb://pos:5e890*^[]!@mongo:27017/
+    depends_on:
+      - mongo
+
+volumes:
+  rms-db:
+    name: "rms-app-db"
+  pos-db:
+    name: "pos-mongo-db"
