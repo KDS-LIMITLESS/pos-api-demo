@@ -2,11 +2,11 @@ version: "3.9"
 services:
   rm:
     build: 
-      context: ./RM
+      context: ./rm
     ports:
       - "5000:3000"
     volumes:
-      - ./RM:/rm
+      - ./rm:/rm
     depends_on:
       - db
     deploy:
@@ -24,23 +24,13 @@ services:
     ports:
       - "15432:5432"
     volumes:
-      - rms-db:/usr/docker/volumes
+      - rms-db:/data/db
   
   adminer:
     image: adminer
     restart: always
     ports:
       - "8080:8080"
-  
-  pos:
-    build:
-      context: ./POS
-    ports:
-      - "5050: 5050"
-    volumes:
-      - ./POS:/pos
-    depends_on:
-      - mongo
     
   mongo:
     image: mongo
