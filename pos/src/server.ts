@@ -1,11 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from'dotenv'
 
 const app = express();
+dotenv.config()
 
 app.use(express.json());
 app.use(cors()); // add more security checks to cors 
-
 
 const PORT = process.env.POS_PORT || 4000;  // use node_env
 
