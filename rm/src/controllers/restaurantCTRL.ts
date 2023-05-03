@@ -1,7 +1,7 @@
 import { IReq, IRes } from '../Types/express';
-import HttpStatusCodes from '../app-constants/HttpStatusCodes';
-import AppConstants from '../app-constants/custom';
-import { IRestaurant, IRestaurantOpt } from '../models/restaurants';
+import HttpStatusCodes from '../../../app-constants/HttpStatusCodes';
+import AppConstants from '../../../app-constants/custom';
+import { IRestaurant } from '../models/restaurants';
 import RestaurantService from '../services/restaurantService';
 
 
@@ -62,7 +62,7 @@ export default class RestaurantControllers {
     }
 }
 /**
-* Check if incoming request is a type of IUser
+* Check if incoming request is a type of IItem
 * @param object object to check against the interface
 * @returns boolean
 */

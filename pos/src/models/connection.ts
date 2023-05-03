@@ -15,13 +15,16 @@ export const client = new MongoClient(URI as string, {
   socketTimeoutMS: 8000
 });
 
+// Connect to client
 
+client.connect();
+export const db = client.db('pos');
 
-client.on("connectionPoolCreated", function(pool) {
+client.on("connectionPoolCreated", function(pool : any) {
   console.log("connection pool acquired... " + pool.options?.maxIdleTimeMS)
 })
 
-client.on("connectionPoolClosed", function(pool) {
+client.on("connectionPoolClosed", function(pool : any) {
   console.log("Pool clossed " + pool.time)
 })
 

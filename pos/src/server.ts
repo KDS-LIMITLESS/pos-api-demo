@@ -6,7 +6,9 @@ const app = express();
 dotenv.config()
 
 app.use(express.json());
-app.use(cors()); // add more security checks to cors 
+app.use(cors()); // add more security checks to cors
+
+app.use('/api', require('./routes/index'));
 
 const PORT = process.env.POS_PORT || 4000;  // use node_env
 

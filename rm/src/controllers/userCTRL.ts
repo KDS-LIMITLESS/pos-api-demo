@@ -1,6 +1,6 @@
 import { IReq, IRes, UserLogin} from '../Types/express';
-import HttpStatusCodes from '../app-constants/HttpStatusCodes';
-import AppConstants from '../app-constants/custom';
+import HttpStatusCodes from '../../../app-constants/HttpStatusCodes';
+import AppConstants from '../../../app-constants/custom';
 import { IUser} from '../models/users';
 
 import UserService from '../services/UserService';

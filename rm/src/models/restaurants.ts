@@ -1,6 +1,6 @@
 import SQL from "sql-template-strings";
 import { pool as db } from "./connection";
-import AppConstants from "../app-constants/custom";
+import AppConstants from "../../../app-constants/custom";
 
 export enum VerificationStatus {
     VERIFIED = "VERIFIED",

@@ -98,5 +98,5 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "include": ["src", "../app-constants"]
+  "include": ["src", "../node_modules/app-constants, ".../node_modules/app-constants "../utilsils", "../app-constants", "src/Types"]
 }
