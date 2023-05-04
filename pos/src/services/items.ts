@@ -1,4 +1,4 @@
-import { IItem, ItemsModel } from '../models/item';
+import { IItem, ItemsModel } from '../models/items';
 import { LogError } from '../utils/errors';
 import HttpStatusCodes from '../../../app-constants/HttpStatusCodes';
 import AppConstants from '../../../app-constants/custom';
@@ -28,7 +28,7 @@ async function getAllItems(): Promise<IItem[]> {
             return (items);
 }
 
-async function getItem(item_name : IItem['item_name']) {
+async function getItem(item_name : IItem['item_name']): Promise<IItem> {
     const item : IItem | null = await _iM.getItem(item_name);
 
     if (item == null) {

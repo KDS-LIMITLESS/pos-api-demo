@@ -41,6 +41,7 @@ export class ItemsModel {
 
     public async getItem(item_name: IItem['item_name']): Promise<IItem | null> {
         const item: IItem | null = await ItemsCollection.findOne({ item_name });
+        
         return (item);
     }
 
