@@ -32,7 +32,9 @@ enum AppConstants  {
     /**
      * The specified restaurant could not be found
      */
-    DOES_NOT_EXIST = "The Restaurant you're looking for doesn't exist"
+    DOES_NOT_EXIST = "The Restaurant you're looking for doesn't exist",
+
+    ITEM_ALREADY_EXISTS = "ITEM ALREADY EXISTS"
 
 }
 export default AppConstants;

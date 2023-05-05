@@ -16,23 +16,22 @@ export class RestaurantItemsModel {
         @param: item_name, item_category, item_price
         @returns Item
     */
-    async importItem(newItem: RestaurantItem): Promise<IItem> {
-        const item : IItem = (new ItemsModel).getItem(newItem.item_name);
+    async importItem(newItem: IItem, restaurantID:string): Promise<RestaurantItems> {
+        // const item : IItem = (new ItemsModel).getItem(newItem.item_name);
 
 
-        if (RestaurantItemsCollection.findOne({_id: newItem.restaurantID}) == null) {
-            const newRestaurantItems : RestaurantItems = {
-                _id: newItem.restaurantID,
-                items: [item]
-            }     
-            const insertResult: InsertOneResult<RestaurantItems> = await RestaurantItemsCollection.insertOne(newRestaurantItems);
-            const createdRestaurantItemsId = insertResult.insertedId;
+        // if (!RestaurantItemsCollection.findOne({_id: restaurantID}, {item_name: newItem.item_name}) ) {
+        const newRestaurantItems : RestaurantItems = {
+            _id: restaurantID,
+            items: [newItem]
+        }     
+        const insertResult: InsertOneResult<RestaurantItems> = await RestaurantItemsCollection.insertOne(newRestaurantItems);
+        return newRestaurantItems
+        
 
-        }
+        // await RestaurantItemsCollection.updateOne({ _id: newItem.restaurantID }, { $push: { items : item } });
 
-        await RestaurantItemsCollection.updateOne({ _id: newItem.restaurantID }, { $push: { items : item } });
-
-        return (item);
+        // return (item);
 
     }
 
@@ -42,10 +41,10 @@ export class RestaurantItemsModel {
         @returns Items Array
     */
 
-    async getAllItems(restaurantID: string): Promise<IItem[]> {
-        const restaurantItems: RestaurantItems | null = await RestaurantItemsCollection.findOne({ _id: restaurantID });
-        const items: IItem[] = restaurantItems.items;
-        return (items);
+    async getAllItems(restaurantID: string): Promise<RestaurantItem> {
+        const restaurantItems: RestaurantItem | null = await RestaurantItemsCollection.findOne({ _id: restaurantID });
+        // const items: RestaurantItem = restaurantItems!
+        return (restaurantItems!);
     }
 
     /**
@@ -54,16 +53,11 @@ export class RestaurantItemsModel {
         @returns Item 
     */
 
-    async getItem(restaurantItem: RestaurantItem): Promise<IItem | null> {
+    async getItem(restaurantItem: RestaurantItem): Promise<RestaurantItems | null> {
 
-        const restaurantItems: RestaurantItems | null = await RestaurantItemsCollection.findOne(
-            { _id: restaurantItem.restaurantID }
+        const item: RestaurantItems | null = await RestaurantItemsCollection.findOne(
+            { _id: restaurantItem.restaurantID }, {item_name: restaurantItem.item_name}
         );
-
-        const item: IItem | null = restaurantItems.items.find((item) => {
-            return (item.item_name == restaurantItem.item_name);
-        });
-        
         return (item);
     }
 

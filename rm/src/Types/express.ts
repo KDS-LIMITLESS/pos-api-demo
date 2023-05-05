@@ -1,6 +1,5 @@
 import * as e from 'express';
 import { Query } from 'express-serve-static-core';
-import { JwtPayload } from 'jsonwebtoken';
 import { IUser } from '../models/users';
 
 
