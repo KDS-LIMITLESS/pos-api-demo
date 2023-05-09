@@ -6,21 +6,24 @@ class CreateTable {
 
   async createUserTable(): Promise<void> {
     return db.query(`CREATE TABLE IF NOT EXISTS users (
-        email VARCHAR PRIMARY KEY NOT NULL,
-        username VARCHAR NOT NULL UNIQUE,
-        pwdhash VARCHAR NOT NULL,
-        role VARCHAR NOT NULL
-    )`)
-      .then(function() {
-        console.log('Created Users Table');
-      });
+      email VARCHAR PRIMARY KEY NOT NULL,
+      username VARCHAR NOT NULL UNIQUE,
+      pwdhash VARCHAR NOT NULL,
+      role VARCHAR NOT NULL,
+      phone_number VARCHAR,
+      full_name VARCHAR NOT NULL,
+      status VARCHAR DEFAULT = 'ACTIVE'
+      works_for VARCHAR NOT NULL REFERENCES restaurants(business_name) ON_DELETE CASCADE
+    )`).then(function() {
+      console.log('Created Users Table');
+    });
   }
 
   static async createRestaurantTable(): Promise<void> {
     return db.query(`CREATE TABLE restaurants (
       business_name VARCHAR PRIMARY KEY,
       phone_number VARCHAR(20),
-      restaurant_id VARCHAR(6),
+      restaurant_id VARCHAR(6) UNIQUE,
       verification_status VARCHAR(10),
       admin VARCHAR,
       FOREIGN KEY (admin) REFERENCES users(email)

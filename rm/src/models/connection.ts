@@ -1,6 +1,5 @@
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
-import { tables } from './Tables';
 
 dotenv.config();
 
@@ -13,15 +12,15 @@ export const pool = new Pool({
 });
 
 pool.on('connect', function(client) {
-  console.log('Connected to database', pool.totalCount);
+  client.emit(`Connected to database.... ${pool.totalCount} `);
 });
 
 pool.on('error', function(err, client) {
-  console.log(err.message);
+  client.emit(`${err.message}`);
 });
 
-pool.on('remove', function(){
-  console.log('A client was removed', pool.totalCount);
+pool.on('remove', function(client){
+  client.emit(`A client was removed ${pool.totalCount}`)
 });
 
 export default {
