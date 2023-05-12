@@ -47,7 +47,7 @@ export class RestaurantItemsModel {
       { _id: restaurantID },
       { $push: { items: newItem } }
     );
-    return result.value?.items[result.value.items.length - 1]!;
+    return newItem;
   }
 
   /**
@@ -56,10 +56,14 @@ export class RestaurantItemsModel {
         @returns Items Array
     */
 
-  async getAllItems(restaurantID: string): Promise<RestaurantItems> {
+  async getAllItems(restaurantID: string): Promise<RestaurantItems | null> {
     const restaurantItems: RestaurantItems | null =
       await RestaurantItemsCollection.findOne({ _id: restaurantID });
-    return restaurantItems!;
+
+    if (!restaurantItems){
+      return null;
+    }
+    return restaurantItems;
   }
 
   /**
@@ -68,14 +72,17 @@ export class RestaurantItemsModel {
         @returns Item 
     */
 
-  async getItem(restaurantItem: RestaurantItem): Promise<IItem> {
+  async getItem(restaurantItem: RestaurantItem): Promise<IItem | null> {
     const restaurantItems: RestaurantItems | null =
       await RestaurantItemsCollection.findOne({
         _id: restaurantItem.restaurantID,
       });
 
-      
-    const item: IItem | undefined = restaurantItems!.items.find((item) => {
+    if (!restaurantItems) {
+      return null;
+    }
+
+    const item: IItem | undefined = restaurantItems.items.find((item) => {
       return item.item_name == restaurantItem.item_name;
     });
     return item!;

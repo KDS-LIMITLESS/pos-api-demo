@@ -9,5 +9,8 @@ const router = express.Router();
 router.post('/import', restaurantItemsControllers.importItem);
 router.get('/all', restaurantItemsControllers.getAllItems);
 router.get('/get', restaurantItemsControllers.getItem);
-router.put('/update', restaurantItemsControllers.updateItem);
+router.patch('/update', restaurantItemsControllers.updateItem);
 router.delete('/delete', restaurantItemsControllers.deleteItem);
+
+
+module.exports = router

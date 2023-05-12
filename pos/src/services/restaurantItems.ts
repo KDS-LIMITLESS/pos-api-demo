@@ -1,5 +1,8 @@
 import { IItem } from "../models/items";
-import { RestaurantItemsModel, RestaurantItems } from "../models/restaurantItems";
+import {
+  RestaurantItemsModel,
+  RestaurantItems,
+} from "../models/restaurantItems";
 import { RestaurantItem } from "../models/types";
 import { LogError } from "../utils/errors";
 import HttpStatusCodes from "../../../app-constants/HttpStatusCodes";
@@ -8,11 +11,13 @@ import AppConstants from "../../../app-constants/custom";
 const _rIM = new RestaurantItemsModel();
 
 async function importItem(newItem: RestaurantItem): Promise<IItem> {
-  let restaurantItems: RestaurantItems | null = await _rIM.getAllItems(newItem.restaurantID);
+  let restaurantItems: RestaurantItems | null = await _rIM.getAllItems(
+    newItem.restaurantID
+  );
 
   if (restaurantItems == null) {
-    restaurantItems = await _rIM.createRestaurantItems(newItem.restaurantID)
-    }
+    restaurantItems = await _rIM.createRestaurantItems(newItem.restaurantID);
+  }
 
   const item: IItem = await _rIM.getItemFromItems(newItem.item_name);
 
@@ -21,12 +26,11 @@ async function importItem(newItem: RestaurantItem): Promise<IItem> {
   }
 
   const importedItem = await _rIM.importItem(item, newItem.restaurantID);
-  return (importedItem);
-
+  return importedItem;
 }
 
 async function getAllItems(restaurantID: string): Promise<RestaurantItems> {
-  const items: RestaurantItems = await _rIM.getAllItems(restaurantID);
+  const items: RestaurantItems | null = await _rIM.getAllItems(restaurantID);
 
   if (items == null) {
     throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);

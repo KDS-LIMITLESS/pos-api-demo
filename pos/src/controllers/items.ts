@@ -12,9 +12,9 @@ export default class RestaurantControllers {
       const item = await ItemService.createItem(itemSrc);
 
       res.status(HttpStatusCodes.CREATED).json(item);
+    } else {
+      res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
     }
-
-    res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
   }
 
   public async getAllItems(req: IReq, res: IRes) {

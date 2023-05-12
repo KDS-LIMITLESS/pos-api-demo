@@ -2,7 +2,7 @@ import express from 'express';
 
 const router = express.Router();
 
-router.use('/items', require('./itemsRoutes'));
-router.use('/items/restaurant', require('./restaurantItemsRoutes'));
+router.use('/items', require('./items'));
+router.use('/items/restaurant', require('./restaurantItems'));
 
 module.exports = router;
