@@ -5,8 +5,8 @@ import {
 } from "../models/restaurantItems";
 import { RestaurantItem } from "../models/types";
 import { LogError } from "../utils/errors";
-import HttpStatusCodes from "../../../app-constants/HttpStatusCodes";
-import AppConstants from "../../../app-constants/custom";
+import HttpStatusCodes from "../app-constants/HttpStatusCodes";
+import AppConstants from "../app-constants/custom";
 
 const _rIM = new RestaurantItemsModel();
 

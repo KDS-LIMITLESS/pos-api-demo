@@ -1,6 +1,6 @@
 import { IReq, IRes } from "../Types/express";
-import HttpStatusCodes from "../../../app-constants/HttpStatusCodes";
-import AppConstants from "../../../app-constants/custom";
+import HttpStatusCodes from "../app-constants/HttpStatusCodes";
+import AppConstants from "../app-constants/custom";
 import { IItem } from "../models/items";
 import ItemService from "../services/items";
 

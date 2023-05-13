@@ -2,8 +2,8 @@ import { IReq, IRes } from "../Types/express";
 import { IItem } from "../models/items";
 import { RestaurantItems } from "../models/restaurantItems";
 import { RestaurantItem } from "../models/types";
-import HttpStatusCodes from "../../../app-constants/HttpStatusCodes";
-import AppConstants from "../../../app-constants/custom";
+import HttpStatusCodes from "../app-constants/HttpStatusCodes";
+import AppConstants from "../app-constants/custom";
 import RestaurantItemsService from "../services/restaurantItems";
 
 export default class RestaurantItemsControllers {

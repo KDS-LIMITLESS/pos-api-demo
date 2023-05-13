@@ -1,4 +1,4 @@
-import HttpStatusCodes from '../../../app-constants/HttpStatusCodes';
+import HttpStatusCodes from '../../../pos/src/app-constants/HttpStatusCodes';
 
 export class LogError extends Error {
   status: HttpStatusCodes;

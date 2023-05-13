@@ -1,7 +1,7 @@
 import { UserModel, IUser } from '../models/users';
 import { LogError } from '../utils/errors';
-import HttpStatusCodes from '../../../app-constants/HttpStatusCodes';
-import AppConstants from '../../../app-constants/custom';
+import HttpStatusCodes from '../app-constants/HttpStatusCodes';
+import AppConstants from '../app-constants/custom';
 import tokens from '../middlewares/tokens';
 import { UserLogin, UserSession } from '../Types/express';
 

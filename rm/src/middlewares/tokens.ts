@@ -2,9 +2,9 @@ import jwt  from "jsonwebtoken";
 import * as e from 'express'
 import * as dotenv from 'dotenv'
 import { IUser } from "../models/users";
-import HttpStatusCodes from "../../../app-constants/HttpStatusCodes";
+import HttpStatusCodes from "../app-constants/HttpStatusCodes";
 import { LogError } from "../utils/errors";
-import AppConstants from "../../../app-constants/custom";
+import AppConstants from "../app-constants/custom";
 
 dotenv.config()
 
