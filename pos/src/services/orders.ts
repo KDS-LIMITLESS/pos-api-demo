@@ -2,14 +2,16 @@ import { IOrder, OrdersModel } from "../models/orders";
 import { LogError } from "../utils/errors";
 import HttpStatusCodes from "../app-constants/HttpStatusCodes";
 import AppConstants from "../app-constants/custom";
+import { generateId } from "../utils/generate";
 
 
 const _oM = new OrdersModel();
 
 
 async function createOrder(newOrder: IOrder): Promise<IOrder> {
+    newOrder._id = generateId(AppConstants.ID_CHARS, 8);
     newOrder.timestamp = Date.now();
-    
+
     const order: IOrder | null = await _oM.createOrder(newOrder);
     
     if (order == null) {

@@ -68,7 +68,7 @@ export default class OrdersController {
  */
 export function instanceOfOrder(object: any): object is IOrder {
   return (
-    "order_id" in object && "restaurant_id" in object && "order_items" in object
+    "restaurant_id" in object && "username" in object && "order_items" in object
   );
 }
 // beware ts is not typesafe at runtime perfom some valiation

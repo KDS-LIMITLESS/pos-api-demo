@@ -52,7 +52,7 @@ export class OrdersModel {
     @param: order_id
     @returns IOrder 
     */ 
-    async getOrder(order_id: string): Promise<IOrder | null> {
+    async getOrder(order_id: IOrder["_id"]): Promise<IOrder | null> {
         const order: IOrder | null = await OrdersCollection.findOne({
             _id: order_id
         });
@@ -62,12 +62,13 @@ export class OrdersModel {
     }
 
 
+    
     /**
     Delete Order 
     @param: order_id
     @returns Boolean 
     */ 
-    async deleteOrder(order_id: string): Promise<Boolean> {
+    async deleteOrder(order_id: IOrder["_id"]): Promise<Boolean> {
         const result: DeleteResult = await OrdersCollection.deleteOne({
             _id: order_id
         });
