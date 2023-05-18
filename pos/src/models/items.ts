@@ -15,11 +15,13 @@ export class ItemsModel {
     */
     public async createItem(newItem : IItem): Promise<IItem | null> {
         const insertResult: InsertOneResult<IItem> = await ItemsCollection.insertOne(newItem);
-        const createdItemId = insertResult.insertedId;
-
-        const createdItem : IItem | null = await ItemsCollection.findOne({ _id: createdItemId });
-
-        return (createdItem);
+        
+        if (insertResult.acknowledged){
+            return newItem;
+        }
+        else {
+            return null;
+        }
     }
 
 
