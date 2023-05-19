@@ -5,6 +5,8 @@ enum AppConstants  {
      */
     USER_EXISTS = 'An account with email already exists',
 
+    USER_NOT_FOUND = 'User does not exist',
+
     /**
      * The Authourization header is missing or is not valid
      */
@@ -25,6 +27,11 @@ enum AppConstants  {
     ID_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
 
     /**
+     * characters for generating OTP
+     */
+    OTP_CHARS = '0123456789',
+
+    /**
      * Creation of the restaurant failed
      */
     CREATION_FAIL = 'Restaurant creation failed',
@@ -32,9 +39,17 @@ enum AppConstants  {
     /**
      * The specified restaurant could not be found
      */
-    DOES_NOT_EXIST = "The Restaurant you're looking for doesn't exist",
+    DOES_NOT_EXIST = 'The Restaurant you\'re looking for doesn\'t exist',
 
-    ITEM_ALREADY_EXISTS = "ITEM ALREADY EXISTS"
+    ITEM_ALREADY_EXISTS = 'ITEM ALREADY EXISTS',
+
+    USER_ALREADY_SUSPENDED = 'This user is alradey suspended.',
+    /**
+     * Theotp the user entered does not match what's sent to the provided email
+     */
+    BAD_OTP = 'INVALID OTP',
+
+    SERVER_ERROR ='An error occured, please try again in a few minutes'
 
 }
 export default AppConstants;

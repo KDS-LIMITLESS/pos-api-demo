@@ -43,21 +43,23 @@ export class RestaurantModel {
   @param: business_name, phone_number, restaurant_id, verification_status, owner
   @returns Restaurant
   */
-  public async create(restaurant: IRestaurant): Promise<IRestaurant> {
+  public async createRestaurant(restaurant: IRestaurant): Promise<IRestaurant> {
     const { rows } = await db.query<IRestaurant>(
+      
       SQL`INSERT INTO restaurants (
         restaurant_id,
         business_name, 
-        phone_number, 
-        verification_status,
-        admin
-      ) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+        business_address,
+        mode,
+        parent_restaurant_id
+        
+      ) VALUES ($1,$2,$3,$4, $5) RETURNING *`,
       [
-        this.generateId(),
+        await generateUniqueIDs(AppConstants.ID_CHARS),
         restaurant.business_name,
-        restaurant.phone_number,
-        VerificationStatus.PENDING,
-        restaurant.owner,
+        restaurant.business_address,
+        restaurant.mode,
+        restaurant.parentt_restaurant_id,
       ]
     );
     return rows[0];

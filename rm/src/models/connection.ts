@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
+// import { tables } from './Tables';
 
 dotenv.config();
 
@@ -11,6 +12,8 @@ export const pool = new Pool({
   connectionTimeoutMillis: 10000,
 });
 
+// tables.createRestaurantTable()
+// tables.createUserTable()
 pool.on('connect', function(client) {
   client.emit(`Connected to database.... ${pool.totalCount} `);
 });
@@ -20,7 +23,7 @@ pool.on('error', function(err, client) {
 });
 
 pool.on('remove', function(client){
-  client.emit(`A client was removed ${pool.totalCount}`)
+  client.emit(`A client was removed ${pool.totalCount}`);
 });
 
 export default {

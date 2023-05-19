@@ -5,42 +5,60 @@ import { pool as db } from './connection';
 class CreateTable {
 
   async createUserTable(): Promise<void> {
-    return db.query(`CREATE TABLE IF NOT EXISTS users (
+    await db.query(`CREATE TABLE IF NOT EXISTS users (
       email VARCHAR PRIMARY KEY NOT NULL,
       username VARCHAR NOT NULL UNIQUE,
       pwdhash VARCHAR NOT NULL,
       role VARCHAR NOT NULL,
       phone_number VARCHAR,
       full_name VARCHAR NOT NULL,
-      status VARCHAR DEFAULT = 'ACTIVE'
-      works_for VARCHAR NOT NULL REFERENCES restaurants(business_name) ON_DELETE CASCADE
-    )`).then(function() {
-      console.log('Created Users Table');
-    });
+      status VARCHAR DEFAULT 'PENDING',
+      works_at VARCHAR NOT NULL REFERENCES restaurants(business_name) ON DELETE CASCADE,
+      user_otp VARCHAR,
+      created_at TIMESTAMP DEFAULT now()
+    )`);
+    console.log('Created users table');
   }
 
-  static async createRestaurantTable(): Promise<void> {
-    return db.query(`CREATE TABLE restaurants (
-      business_name VARCHAR PRIMARY KEY,
-      phone_number VARCHAR(20),
-      restaurant_id VARCHAR(6) UNIQUE,
-      verification_status VARCHAR(10),
-      admin VARCHAR,
-      FOREIGN KEY (admin) REFERENCES users(email)
-    );`)
-    .then(function() {
-      console.log('Created restaurants Table');
-    });
+  async createRestaurantTable(): Promise<void> {
+    await db.query(`CREATE TABLE IF NOT EXISTS restaurants (
+      business_name VARCHAR NOT NULL UNIQUE,
+      restaurant_id VARCHAR(6) PRIMARY KEY,
+      business_address VARCHAR NOT NULL,
+      parent_restaurant_id VARCHAR,
+      mode VARCHAR NOT NULL
+    )`);
+    console.log('Created restaurant table');
   }
 
-  static async dropRestaurantTable(): Promise<void> {
-    return db.query(`DROP TABLE restaurant;`)
+  // async multiStoredRestaurant(): Promise<void> {
+  //   return db.query(`CREATE TABLE IF NOT EXISTS ids (
+  //     restaurant_id VARCHAR(6) PRIMARY KEY,
+  //     parent_restaurant_id VARCHAR,
+  //     branch_admin VARCHAR REFERENCES users(username),
+  //     mode VARCHAR NOT NULL
+  //   )`).then(function(){
+  //       setTimeout(() => {
+  //         console.log('Created restaurant table')
+  //       }, 2000)
+  //   })
+  // }
+
+  public async dropUsersTable(): Promise<void> {
+    return db.query('DROP TABLE users CASCADE;')
       .then(function() {
-        console.log('Created restaurants Table');
+        console.log('Dropped users Table');
+      });
+  }
+
+  public async dropRestaurantTable(): Promise<void> {
+    return db.query('DROP TABLE restaurants CASCADE;')
+      .then(function() {
+        console.log('Dropped restaurants Table');
       });
   }
 }
-export const tables = new CreateTable()
+export const tables = new CreateTable();
 
 
   

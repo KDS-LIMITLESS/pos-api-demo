@@ -1,7 +1,6 @@
 import { pool as db } from './connection';
 import SQL from 'sql-template-strings';
-import bcrypt from 'bcrypt'
-import { IRestaurant } from './restaurants';
+import bcrypt from 'bcrypt';
 
 export enum UserRoles {
   Owner,
@@ -16,9 +15,11 @@ export interface IUser {
   phone_number: string,
   email: string,
   password: string,
-  role?: UserRoles,
-  works_for: IRestaurant['business_name'],
-  status: string
+  role:  string,// 'Owner'|'Manager'|'Admin'|'Waiter',
+  works_at: string,
+  status: 'SUSPENDED' | 'ACTIVE',
+  user_otp? : string,
+  created_at: Date
 } 
 
 
@@ -30,7 +31,7 @@ export class UserModel{
   * @returns user
   */
   async newUser(user: IUser): Promise<IUser>{
-    let pwdHash = await bcrypt.hash(user.password, 12)
+    const pwdHash = await bcrypt.hash(user.password, 12);
     const { rows } = await db.query(SQL `INSERT INTO 
       users(
         username, 
@@ -38,44 +39,45 @@ export class UserModel{
         phone_number,
         email, 
         pwdhash, 
-        role
+        role,
+        works_at
       ) 
       VALUES (
         ${user.username},
         ${user.full_name},
-        ${user.phone_number}
+        ${user.phone_number},
         ${user.email}, 
         ${pwdHash}, 
-        ${UserRoles[0]}
+        ${UserRoles[0]},
+        ${user.works_at}
       )`
     );
-    console.log(rows)
-    return rows[0] || null
+    return rows[0] || null;
   }
 
   /**
-   * DB function to check usersl plain password against the hash in db
+   * DB function to check users plain password against the hash in db
    * @param pwd plain password to compare
    * @param email users email 
    * @returns user if pwd matches password in db
    */
-  async compareUserPwd(pwd: string, email?: string): Promise<IUser> {
+  async compareUserPwd(pwd: string, user:IUser): Promise<IUser> {
     const { rows } = await db.query(
-      'SELECT * FROM users WHERE email = $1', [email]
-    )
-    const checkPSW = await bcrypt.compare(pwd, rows[0]['pwdhash'])
-    console.log(checkPSW)
-    return checkPSW === true ? rows[0] : null
+      'SELECT * FROM users WHERE email = $1 OR username = $2',
+      [user.email, user.username]
+    );
+    const checkPSW = await bcrypt.compare(pwd, rows[0]['pwdhash']);
+    return checkPSW === true ? rows[0] : null;
   }
 
   /**
     * Check if given email exists in database
-    * @param email string
+    * @param username string
     * @returns boolean
     */
-  async isUserExist(email: IUser['email']): Promise<boolean> {
-    return (await db.query(`SELECT * FROM users 
-      WHERE email = $1`, [email])).rowCount === 1;
+  async isUserExist(user: IUser): Promise<boolean> {
+    return (await db.query(`SELECT username, email FROM users 
+      WHERE username = $1 OR email = $2`, [user.username, user.email])).rowCount === 1;
   }
 
   /**
@@ -84,8 +86,10 @@ export class UserModel{
    * @returns user
    */
   async getUserProfile(user:IUser): Promise<IUser> {
-    const { rows } = await db.query(SQL `SELECT * FROM users WHERE username = ${user.username}`)
-    return rows[0] || null
+    const { rows } = await db.query(SQL `SELECT username, email,
+    role, works_at, fullname, phone_number FROM users WHERE username = $1`, 
+    [user.username]);
+    return rows[0] || null;
   }
 
   /**
@@ -96,12 +100,12 @@ export class UserModel{
   async updateUserProfile(user:IUser): Promise<IUser> {
     const row = await db.query(SQL `UPDATE users SET 
       username = ${user.username},
-      fullname = ${user.full_name},
+      full_name = ${user.full_name},
       phone_number = ${user.phone_number}
 
-      WHERE email = $1`, [user.email]
-    )
-    return row.rows[0] && row.rowCount
+      WHERE username = $1`, [user.username]
+    );
+    return row.rows[0] && row.rowCount;
   }
 
   /**
@@ -109,9 +113,9 @@ export class UserModel{
    * @param user user to delete from database
    * @returns user
    */
-  async deleteUser(user: IUser['username']): Promise<IUser> {
-    const {rows} = await db.query(`DELETE FROM users WHERE user = $1`, [user])
-    return rows[0]
+  async deleteUser(user: IUser): Promise<IUser> {
+    const {rows} = await db.query('DELETE FROM users WHERE username = $1', [user.username]);
+    return rows[0];
   }
 
   /**
@@ -119,10 +123,10 @@ export class UserModel{
    * @param user user account to suspend
    * @returns user
    */
-  async suspendUser(user:IUser): Promise<IUser> {
+  async updateUserStatus(status: IUser['status'], user:IUser): Promise<IUser> {
     const { rows } = await db.query(`UPDATE users SET status = $1 
-    WHERE username = $2`,['SUSPENDED', user['username']])
-    return rows[0]
+    WHERE username = $2`,[status, user.username]);
+    return rows[0];
   }
 
   /**
@@ -132,10 +136,22 @@ export class UserModel{
    * @returns boolean
    */
   async changePassword(user:IUser, newPassword:string): Promise<boolean>{
-    let pwdHash = await bcrypt.hash(newPassword, 12)
+    const pwdHash = await bcrypt.hash(newPassword, 12);
     const row  = await db.query(`UPDATE users SET password = $1
       WHERE user = $2`, [pwdHash, user['username']]
-    )
-    return row.rowCount === 1
+    );
+    return row.rowCount === 1;
   }
+
+  async setuserOTP(otp: string, user:IUser) {
+    await db.query('UPDATE users SET user_otp = $1 WHERE email = $2', 
+      [otp, user.email]);
+  }
+
+  async getUserOTP(user: IUser): Promise<string>{
+    const otp = await db.query('SELECT user_otp FROM users WHERE email = $1',
+      [user.email]);
+    return otp.rows[0]['user_otp'];
+  }
+
 }
