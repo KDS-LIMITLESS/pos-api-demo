@@ -22,23 +22,6 @@ declare type IRestaurantOpt = Partial<IRestaurant>
 export class RestaurantModel {
   
   /**
-  Generates an ID
-  @param: null
-  @returns new id
-  */
-  private generateId(): string {
-    const idLength = 6;
-    const characters: string = AppConstants.ID_CHARS;
-    let id: string = "";
-    
-    for (let i = 0; i < idLength; i++) {
-      const index = Math.floor(Math.random() * characters.length);
-      id += characters[index];
-    }
-    return id;
-  }
- 
-  /**
   Creates a new Resturant
   @param: business_name, phone_number, restaurant_id, verification_status, owner
   @returns Restaurant
