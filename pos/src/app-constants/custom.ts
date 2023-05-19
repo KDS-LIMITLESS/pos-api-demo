@@ -20,19 +20,19 @@ enum AppConstants  {
     BAD_INPUT_FILED = 'Incorrect or incomplete input fields',
 
     /**
-     * Characters used to generate restaurant ID
+     * Characters used to generate ID for orders
      */
-    ID_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+    ID_CHARS = '0123456789',
 
     /**
-     * Creation of the restaurant failed
+     * Creation failed
      */
-    CREATION_FAIL = 'Restaurant creation failed',
+    CREATION_FAIL = 'Creation failed',
 
     /**
-     * The specified restaurant could not be found
+     * The specified item could not be found
      */
-    DOES_NOT_EXIST = "The Restaurant you're looking for doesn't exist",
+    DOES_NOT_EXIST = "What you're looking for doesn't exist",
 
     ITEM_ALREADY_EXISTS = "ITEM ALREADY EXISTS"
 
