@@ -55,18 +55,28 @@ export default class RestaurantControllers {
 }
 
 /**
-* Check if incoming request is a type of IUser
+* Check if incoming request is a type of IItem
 * @param object object to check against the interface
 * @returns boolean
 */
 
 function instanceOfRestaurant(object: any): object is IRestaurant {
+<<<<<<< HEAD
   return ( 
     'business_name' in object && 
     'business_address' in object && 
     'mode'  in object &&
     'parent_restaurant_id' in object
   );
+=======
+  return (
+    'restaurant_id' && 
+    'business_name' && 
+    'phone_number' && 
+    'verification_status' && 
+    'admin'  in object
+  )
+>>>>>>> 33355f31a6747e875f0343e515431585bb47a1c5
 }
 // beware ts is not typesafe at runtime perfom some valiation
 
