@@ -3,19 +3,20 @@ import HttpStatusCodes from '../app-constants/HttpStatusCodes';
 import AppConstants from '../app-constants/custom';
 import { IRestaurant } from '../models/restaurants';
 import RestaurantService from '../services/restaurantService';
+import { NextFunction } from 'express';
 
 
 
 export default class RestaurantControllers {
 
-  public async createRestaurant(req: IReq, res: IRes) {
+  public async createRestaurant(req: IReq, res: IRes, next: NextFunction) {
 
     const restaurantSrc : IRestaurant = req.body;
     if (instanceOfRestaurant(restaurantSrc)) {
-      const restaurant = await RestaurantService.createRestaurant(
-        restaurantSrc
-      );
-      res.status(HttpStatusCodes.CREATED).json(restaurant);
+      await RestaurantService.createRestaurant(restaurantSrc);
+      next();
+    } else {
+      res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
     }
   }
 
@@ -52,19 +53,20 @@ export default class RestaurantControllers {
     if (success) res.sendStatus(HttpStatusCodes.NO_CONTENT);
   }
 }
+
 /**
 * Check if incoming request is a type of IItem
 * @param object object to check against the interface
 * @returns boolean
 */
+
 function instanceOfRestaurant(object: any): object is IRestaurant {
-  return (
-    'restaurant_id' && 
-    'business_name' && 
-    'phone_number' && 
-    'verification_status' && 
-    'admin'  in object
-  )
+  return ( 
+    'business_name' in object && 
+    'business_address' in object && 
+    'mode'  in object &&
+    'parent_restaurant_id' in object
+  );
 }
 // beware ts is not typesafe at runtime perfom some valiation
 

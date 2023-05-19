@@ -9,19 +9,20 @@ import AppConstants from '../app-constants/custom';
 
 const _rM = new RestaurantModel();
 
+
 async function createRestaurant(restaurant: IRestaurant): 
 Promise<IRestaurant>	{
 
-    const createdRestaurant = await _rM.create(restaurant);
+  const createdRestaurant = await _rM.createRestaurant(restaurant);
 
-    if (createdRestaurant == null) {
-        throw new LogError(
-            HttpStatusCodes.INTERNAL_SERVER_ERROR,
-            AppConstants.CREATION_FAIL
-        );
-    }
+  if (createdRestaurant == null) {
+    throw new LogError(
+      HttpStatusCodes.INTERNAL_SERVER_ERROR,
+      AppConstants.CREATION_FAIL
+    );
+  }
 
-    return (createdRestaurant);
+  return (createdRestaurant);
 }
 
 

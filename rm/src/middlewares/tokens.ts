@@ -1,55 +1,93 @@
-import jwt  from "jsonwebtoken";
-import * as e from 'express'
-import * as dotenv from 'dotenv'
-import { IUser } from "../models/users";
-import HttpStatusCodes from "../app-constants/HttpStatusCodes";
-import { LogError } from "../utils/errors";
-import AppConstants from "../app-constants/custom";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import * as e from 'express';
+import * as dotenv from 'dotenv';
+import { IReq, IRes } from '../Types/express';
 
-dotenv.config()
+dotenv.config();
 
-interface IReqUser<U = any> extends e.Request {
-  user: U
+
+interface TokenPayload extends JwtPayload {
+  user: string;
+  role: string;
+  status: string;
+  works_at: string
 }
 
+function generateToken(user: string, role: string, 
+  status: string, works_at: string): string 
+{
+  const secretKey = process.env.JWT_SECRET as string; 
 
-async function generateToken(user:string, role:IUser['role']): Promise<string> {
-  const token = jwt.sign({user, role}, process.env.JWT_SECRET as string, {
-    expiresIn: "10h"
-  })
-  return token
+  const payload: TokenPayload = {
+    user, role, status, works_at
+  };
+
+  const options: jwt.SignOptions = {
+    expiresIn: '1h', // Token expiration time
+  };
+
+  const token = jwt.sign(payload, secretKey, options);
+
+  return token;
 }
 
-function verifyToken(token:string): string | jwt.JwtPayload | undefined {
-  let userToken: string | jwt.JwtPayload| undefined;
-  jwt.verify(token, process.env.JWT_SECRET as string, 
-    function (error, decoded) {
+function verifyUser(req: IReq, res: IRes, next: e.NextFunction): void {
+  try {
+    const secretKey = process.env.JWT_SECRET as string; 
+    const authHeader = req.headers.authorization;
+   
 
-      if (error) throw new LogError(HttpStatusCodes.BAD_REQUEST, error.message)
-      userToken = decoded;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      // Bearer token not found in headers
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
 
-    });
-  return userToken;
-}
+    const token = authHeader.split(' ')[1];
 
-function authenticateUserToken(req:IReqUser, res:e.Response, next:e.NextFunction) {
-  const token = req.headers.authorization?.split('')
-  if (token === undefined || token![0] !== 'Bearer' ||
-    token![1] === undefined) {
-
-    throw new LogError(
-      HttpStatusCodes.UNAUTHORIZED, 
-      AppConstants.BAD_AUTH_HEADERS
-    )
+    const decodedToken = jwt.verify(token, secretKey) as TokenPayload;
+    req.user = decodedToken;
+    next();
+    
+  } catch (error) {
+    // Token verification failed
+    res.status(401).json({ message: 'Unauthorized' });
   }
-  const user = verifyToken(token[1])
-  req.user = user
-  next()
+}
+
+function verifyTokenAndCheckAdmin(req: IReq, res: IRes, next: e.NextFunction): void {
+  try {
+    const secretKey = process.env.JWT_SECRET as string;
+    let token = req.headers.authorization;
+
+    if (!token) {
+      // Token not found in headers
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
+    if (token.startsWith('Bearer ')) {
+      token = token.slice(7); // Remove 'Bearer ' prefix to get the token
+    }
+
+    const decodedToken = jwt.verify(token, secretKey) as TokenPayload;
+
+    if (decodedToken.role === 'admin') {
+      // User role is admin
+      next();
+    } else {
+      // User role is not admin
+      res.status(403).json({ message: 'Forbidden' });
+    }
+  } catch (error) {
+    // Token verification failed
+    res.status(401).json({ message: 'Unauthorized' });
+  }
 }
 
 
 export default{
   generateToken,
-  verifyToken,
-  authenticateUserToken
-} as const
+  verifyUser,
+  verifyTokenAndCheckAdmin
+} as const;
