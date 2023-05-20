@@ -1,5 +1,4 @@
 import { ItemsCollection, RestaurantItemsCollection } from "./collections";
-import { InsertOneResult } from "mongodb";
 import { RestaurantItem } from "./types";
 import { IItem } from "./items";
 
@@ -19,8 +18,7 @@ export class RestaurantItemsModel {
       _id: restaurantID,
       items: [],
     };
-    const insertResult: InsertOneResult<RestaurantItems> =
-      await RestaurantItemsCollection.insertOne(newRestaurantItems);
+    await RestaurantItemsCollection.insertOne(newRestaurantItems);
     return newRestaurantItems;
   }
 
@@ -43,7 +41,7 @@ export class RestaurantItemsModel {
         @returns Item
     */
   async importItem(newItem: IItem, restaurantID: string): Promise<IItem> {
-    const result = await RestaurantItemsCollection.findOneAndUpdate(
+    await RestaurantItemsCollection.findOneAndUpdate(
       { _id: restaurantID },
       { $push: { items: newItem } }
     );

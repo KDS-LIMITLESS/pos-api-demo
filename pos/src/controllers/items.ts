@@ -17,7 +17,7 @@ export default class RestaurantControllers {
     }
   }
 
-  public async getAllItems(req: IReq, res: IRes) {
+  public async getAllItems(_: IReq, res: IRes) {
     const items: IItem[] = await ItemService.getAllItems();
 
     res.status(HttpStatusCodes.OK).json(items);
