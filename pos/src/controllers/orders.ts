@@ -9,7 +9,7 @@ export default class OrdersController {
     public async createOrder(req: IReq, res: IRes) {
         const orderSrc: IOrder = req.body;
 
-        if (instanceOfOrder(orderSrc)) {
+        if (instanceOfOrder(orderSrc) && Array.isArray(orderSrc.order_items)) {
           const order = await OrdersService.createOrder(orderSrc);
 
           res.status(HttpStatusCodes.CREATED).json(order);

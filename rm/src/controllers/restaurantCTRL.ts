@@ -33,9 +33,8 @@ export default class RestaurantControllers {
 
 
   public async updateRestaurant (req: IReq, res: IRes) {
-
     const updatedRestaurant = req.body;
-    if (instanceOfRestaurant(updatedRestaurant)) {
+    if (instanceOfRestaurant(updatedRestaurant) && 'restaurant_id' in updatedRestaurant) {
       const newRestaurant = await RestaurantService.updateRestaurant(
         updatedRestaurant
       );
