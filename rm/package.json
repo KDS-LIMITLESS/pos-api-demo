@@ -8,7 +8,7 @@
     "lint": "eslint . --fix",
     "dev": "nodemon --watch './**/*' --exec 'ts-node' ./src/server.ts",
     "prestart": "tsc -p .",
-    "start": "pm2 start ./public/server.js --watch -i 3",
+    "start": "pm2 start ./rm-build/server.js --watch -i 0",
     "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
   },
   "keywords": [],
@@ -21,6 +21,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "pg": "^8.10.0",
+    "pm2": "^5.3.0",
     "postmark": "^3.0.18",
     "sql-template-strings": "^2.2.2"
   },

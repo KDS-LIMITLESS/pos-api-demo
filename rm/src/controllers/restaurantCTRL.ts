@@ -23,7 +23,7 @@ export default class RestaurantControllers {
 
   public async getRestaurant (req: IReq, res: IRes) {
 
-    const id : IRestaurant['restaurant_id'] = req.body.restaurant_id
+    const id : IRestaurant['restaurant_id'] = req.body.restaurant_id;
     if(typeof(id) !== 'string') {
       res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
     }
@@ -34,7 +34,7 @@ export default class RestaurantControllers {
 
   public async updateRestaurant (req: IReq, res: IRes) {
 
-    const updatedRestaurant = req.body
+    const updatedRestaurant = req.body;
     if (instanceOfRestaurant(updatedRestaurant)) {
       const newRestaurant = await RestaurantService.updateRestaurant(
         updatedRestaurant
