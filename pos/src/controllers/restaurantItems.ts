@@ -23,12 +23,20 @@ export default class RestaurantItemsControllers {
 
   public async getAllItems(req: IReq, res: IRes) {
     const restaurantID: RestaurantItem["restaurantID"] = req.body.restaurantID;
-    const items: RestaurantItems = await RestaurantItemsService.getAllItems(
-      restaurantID
-    );
-
-    res.status(HttpStatusCodes.OK).json(items);
+    
+    if (restaurantID) {
+      const items: RestaurantItems = await RestaurantItemsService.getAllItems(
+        restaurantID
+      );
+  
+      res.status(HttpStatusCodes.OK).json(items);
+    } else {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(AppConstants.BAD_INPUT_FILED);
+    }
   }
+
 
   public async getItem(req: IReq, res: IRes) {
     const itemSrc: RestaurantItem = req.body;
