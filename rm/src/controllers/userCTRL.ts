@@ -53,10 +53,10 @@ export default class UserControllers {
 
   async deleteUserAccount(req:IReq, res: IRes) {
     const user:IUser = req.body;
-    if (instanceOfUser(user)) {
-      await UserService.deletUser(user);
-      return res.status(HttpStatusCodes.OK).json({message: 'User Deleted'});
-    }
+    
+    await UserService.deletUser(user);
+    return res.status(HttpStatusCodes.OK).json({message: 'User Deleted'});
+    
     res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
   }
 
