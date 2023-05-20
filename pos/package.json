@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix",
     "prestart": "tsc -p .",
-    "start": "pm2 start ./pos-build/server.js --watch -i 0",
+    "start": "pm2 start ./pos-build/server.js --name pos --watch -i 0",
     "dev": "nodemon --watch './**/*' --exec 'ts-node' ./src/server.ts"
   },
   "keywords": [],
