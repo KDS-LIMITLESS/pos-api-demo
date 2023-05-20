@@ -3,18 +3,17 @@ import HttpStatusCodes from '../app-constants/HttpStatusCodes';
 import AppConstants from '../app-constants/custom';
 import { IRestaurant } from '../models/restaurants';
 import RestaurantService from '../services/restaurantService';
-import { NextFunction } from 'express';
 
 
 
 export default class RestaurantControllers {
 
-  public async createRestaurant(req: IReq, res: IRes, next: NextFunction) {
+  public async createRestaurant(req: IReq, res: IRes) {
 
     const restaurantSrc : IRestaurant = req.body;
     if (instanceOfRestaurant(restaurantSrc)) {
-      await RestaurantService.createRestaurant(restaurantSrc);
-      next();
+      const restaurant = await RestaurantService.createRestaurant(restaurantSrc);
+      res.status(HttpStatusCodes.OK).json(restaurant);
     } else {
       res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
     }

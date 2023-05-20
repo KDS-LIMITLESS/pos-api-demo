@@ -1,15 +1,37 @@
 # APIs implemented
 
+# RM server URL
+- ```https://rms-ff.herokuapp.com```
+
+## User APIs
+1. `/api/users/create-user` - Creates a new user
+    requirement: `email`, `username`, `full_name`, `phone_number`, `role`,      `password`, `works_at`
+2. `/api/users/login` - Gives authenticated user access into the system
+    requirements - `username`, `email`, `password`
+3.  `/api/users/delete-user-account` - Deletes a user from the system. Note Only a verified Admin can access this route. 
+        ```Client required to set a Bearer: {token} in the req.headers.authorization```
+    requirement: -  `username`
 
 ## Restaurant APIs
 1. `/api/restaurant/create` - creates a restaurant
-   requirement: `business_name`, `phone_number`, `admin`
+   requirement: `business_name`, `business_address`, `mode`
 2. `/api/restaurant/get` - get a restaurant's details
     requirement: `restaurant_id`
 3. `/api/restaurant/update` - updates a restaurant
     requirement: `restaurant_id`, `business_name`, `phone_number`, `admin`
 4. `/api/restaurant/delete` - deletes a restaurant
     requirement: `restaurant_id`
+
+## Email Auth APIs
+1.  `/api/sent-otp` - Sends an OTP to a user email after registeration
+    requirement - `email`
+2. `/api/resend-otp` - Resends an OTP to a users email
+    requirement - `email`
+3. `/api/verify-user-otp` - Validates the OTP sent
+    requirement - `email`
+
+# POS server URL
+- ```https://pos-ff.herokuapp.com```
 
 ## General Items APIs
 1. `/api/items/create` - create an item in the general items list
