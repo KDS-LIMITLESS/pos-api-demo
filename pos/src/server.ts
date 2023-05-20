@@ -12,7 +12,7 @@ app.use('/api', require('./routes/index'));
 
 
 
-const PORT = process.env.POS_PORT || 4000;  // use node_env
+const PORT = process.env.PORT || 4000;  // use node_env
 
 app.listen(PORT, function start() {
   console.log(`POS Server Listening for connections on port ${PORT}`);
