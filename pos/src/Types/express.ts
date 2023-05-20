@@ -1,18 +1,9 @@
 import * as e from 'express';
-import { Query } from 'express-serve-static-core';
-import { JwtPayload } from 'jsonwebtoken';
-import { IUser } from '../models/users';
-
-
-export declare type UserSessionResponse = Omit<IUser, 'password'>
 
 export interface IReq<T = any> extends e.Request {
     body: T   
 }
 
-export interface IReqQuery<Q extends Query > extends e.Request {
-    query: Q
-}
 
 /**
  * User response session
@@ -20,7 +11,7 @@ export interface IReqQuery<Q extends Query > extends e.Request {
 export interface ISessionUser {
     full_name: string,
     email: string,
-    role: IUser['role']
+    role: string
 }
 
 /**
@@ -31,8 +22,4 @@ export interface IRes extends e.Response {
         sessionUser?: ISessionUser
     }
 }
-
-export type UserLogin = Pick<IUser, 'password' | 'email'>
-
-export type UserSession = Pick<IUser, 'username' | 'role'>
 
