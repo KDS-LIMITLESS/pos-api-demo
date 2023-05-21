@@ -9,9 +9,9 @@ router.post('/create', restaurantCTRL.createRestaurant);
 
 router.get('/get', restaurantCTRL.getRestaurant);
 
-router.post('/update', restaurantCTRL.updateRestaurant);
+router.put('/update', restaurantCTRL.updateRestaurant);
 
-router.post('/delete', restaurantCTRL.deleteRestaurant);
+router.delete('/delete', restaurantCTRL.deleteRestaurant);
 
 
 module.exports = router;
