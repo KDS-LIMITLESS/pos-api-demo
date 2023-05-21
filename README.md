@@ -14,7 +14,7 @@
 
 ## Restaurant APIs
 1. `/api/restaurant/create` - creates a restaurant
-   requirement: `business_name`, `business_address`, `mode`
+   requirement: `business_name`, `business_address`, `mode` - 'SINGLE STORE', `parent_restaurant_id` - set to "" for single store restaurants
 2. `/api/restaurant/get` - get a restaurant's details
     requirement: `restaurant_id`
 3. `/api/restaurant/update` - updates a restaurant
