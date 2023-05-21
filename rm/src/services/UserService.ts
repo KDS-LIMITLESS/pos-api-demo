@@ -20,20 +20,33 @@ async function registerUser(user:IUser): Promise<any>{
 }
 
 async function login(user:IUser) {
-  const isUser = await _uM.isUserExist(user); 
-  const isUserPWD = await _uM.compareUserPwd(user.password, user); 
-  if (isUser && isUserPWD) {
+
+  const [_, isValidUserPassword] = await Promise.all([
+    _uM.isUserExist(user),
+    _uM.compareUserPwd(user.password, user)
+  ])
+
+  if (isValidUserPassword === null) {
+    throw new LogError(
+      HttpStatusCodes.BAD_REQUEST,
+      AppConstants.INVALID_LOGIN_DETAILS
+    );
+  } else if (
+    isValidUserPassword.status === 'SUSPENDED' ||
+    isValidUserPassword.status === 'PENDING'
+  ){
+    throw new LogError(HttpStatusCodes.UNAUTHORIZED,
+      AppConstants.ACCOUNT_NOT_ACTIVE
+    )
+
+  } else {
     return tokens.generateToken(
-      isUserPWD.username, 
-      isUserPWD.role,
-      isUserPWD.works_at,
-      isUserPWD.status
+      isValidUserPassword.username, 
+      isValidUserPassword.role,
+      isValidUserPassword.works_at,
+      isValidUserPassword.status
     );
   } 
-  throw new LogError(
-    HttpStatusCodes.BAD_REQUEST,
-    AppConstants.INVALID_LOGIN_DETAILS
-  );
 }
 
 async function setUserStatus(status:IUser['status'], user:IUser) {
