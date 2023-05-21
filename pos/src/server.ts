@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors'
 import cors from 'cors';
 import dotenv from'dotenv'
 
@@ -12,7 +13,7 @@ app.use('/api', require('./routes/index'));
 
 
 
-const PORT = process.env.PORT || 4000;  // use node_env
+const PORT = process.env.PORT || 4000; 
 
 app.listen(PORT, function start() {
   console.log(`POS Server Listening for connections on port ${PORT}`);

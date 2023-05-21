@@ -17,7 +17,7 @@ export interface IUser {
   password: string,
   role:  string,// 'Owner'|'Manager'|'Admin'|'Waiter',
   works_at: string,
-  status: 'SUSPENDED' | 'ACTIVE',
+  status: 'SUSPENDED' | 'ACTIVE' | 'PENDING',
   user_otp? : string,
   created_at: Date
 } 
@@ -66,8 +66,10 @@ export class UserModel{
       'SELECT * FROM users WHERE email = $1 OR username = $2',
       [user.email, user.username]
     );
-    const checkPSW = await bcrypt.compare(pwd, rows[0]['pwdhash']);
-    return checkPSW === true ? rows[0] : null;
+    return rows[0] ? 
+      await bcrypt.compare(pwd, rows[0]['pwdhash']) ? rows[0] : null
+    : null
+     // return checkPSW === true ? rows[0] : null;
   }
 
   /**
@@ -127,6 +129,11 @@ export class UserModel{
     const { rows } = await db.query(`UPDATE users SET status = $1 
     WHERE username = $2`,[status, user.username]);
     return rows[0];
+  }
+
+  async userStatus(user: IUser): Promise<IUser['status']> {
+    return (await db.query(`SELECT status FROM users WHERE username = $1`, 
+    [user.username])).rows[0]
   }
 
   /**

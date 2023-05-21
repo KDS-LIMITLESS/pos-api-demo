@@ -5,7 +5,20 @@ enum AppConstants  {
      */
     USER_EXISTS = 'An account with email already exists',
 
+    /**
+     * User details not found in database 
+     */
     USER_NOT_FOUND = 'User does not exist',
+
+    /**
+     * User email not yet verified 
+     */
+    ACCOUNT_NOT_ACTIVE = `Your account is not active. Please verify your email.`,
+
+    /**
+     * User account was suspended by admin
+     */
+    ACCOUNT_SUSPENDED = 'Your account has been suspended. Contact admin for further instructions.',
 
     /**
      * The Authourization header is missing or is not valid
