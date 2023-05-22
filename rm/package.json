@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix",
     "dev": "nodemon --watch './**/*' --exec 'ts-node' ./src/server.ts",
-    "prestart": "tsc -p .",
+    "build": "tsc -p .",
+    "pack": "webpack --config webpack.config.js",
     "start": "pm2 start ./rm-build/server.js --name rm --watch -i 2",
     "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
   },
@@ -41,6 +42,8 @@
     "eslint-plugin-node": "^11.1.0",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.3",
+    "webpack": "^5.83.1",
+    "webpack-cli": "^5.1.1"
   }
 }
