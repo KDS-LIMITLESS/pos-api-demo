@@ -127,7 +127,7 @@ export class UserModel{
    */
   async updateUserStatus(status: IUser['status'], user:IUser): Promise<IUser> {
     const { rows } = await db.query(`UPDATE users SET status = $1 
-    WHERE username = $2`,[status, user.username]);
+    WHERE username = $2 OR email = $3`,[status, user.username, user.email]);
     return rows[0];
   }
 

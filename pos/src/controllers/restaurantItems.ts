@@ -1,17 +1,21 @@
 import { IReq, IRes } from "../Types/express";
-import { IItem } from "../models/items";
 import { RestaurantItems } from "../models/restaurantItems";
-import { RestaurantItem } from "../models/types";
 import HttpStatusCodes from "../app-constants/HttpStatusCodes";
 import AppConstants from "../app-constants/custom";
 import RestaurantItemsService from "../services/restaurantItems";
+import { IItem } from "../models/items";
 
 export default class RestaurantItemsControllers {
   public async importItem(req: IReq, res: IRes) {
-    const itemSrc: RestaurantItem = req.body;
+    // let restaurant_id = req.user.works_at
+    const itemSrc: RestaurantItems = req.body;
 
     if (instanceOfRestaurantItem(itemSrc)) {
-      const item = await RestaurantItemsService.importItem(itemSrc);
+      const item = await RestaurantItemsService.importItem(
+        req.body.restaurant_id, 
+        itemSrc, 
+        req.body.price
+      );
 
       res.status(HttpStatusCodes.CREATED).json(item);
     } else {
@@ -22,10 +26,10 @@ export default class RestaurantItemsControllers {
   }
 
   public async getAllItems(req: IReq, res: IRes) {
-    const restaurantID: RestaurantItem["restaurantID"] = req.body.restaurantID;
+    const restaurantID: RestaurantItems['_id'] = req.body.restaurantID;
     
     if (restaurantID) {
-      const items: RestaurantItems = await RestaurantItemsService.getAllItems(
+      const items = await RestaurantItemsService.getAllItems(
         restaurantID
       );
   
@@ -39,10 +43,13 @@ export default class RestaurantItemsControllers {
 
 
   public async getItem(req: IReq, res: IRes) {
-    const itemSrc: RestaurantItem = req.body;
+    const itemSrc: IItem[] = req.body;
 
     if (instanceOfRestaurantItem(itemSrc)) {
-      const item: IItem = await RestaurantItemsService.getItem(itemSrc);
+      const item = await RestaurantItemsService.getItem(
+        req.body.restaurant_id,
+        itemSrc
+      );
 
       res.status(HttpStatusCodes.OK).json(item);
     } else {
@@ -53,7 +60,7 @@ export default class RestaurantItemsControllers {
   }
 
   public async updateItem(req: IReq, res: IRes) {
-    const itemSrc: RestaurantItem = req.body;
+    const itemSrc: RestaurantItems = req.body;
 
     if (instanceOfRestaurantItem(itemSrc) && "item_price" in itemSrc) {
       const item = await RestaurantItemsService.updateItemPrice(itemSrc);
@@ -67,7 +74,7 @@ export default class RestaurantItemsControllers {
   }
 
   public async deleteItem(req: IReq, res: IRes) {
-    const itemSrc: RestaurantItem = req.body;
+    const itemSrc: RestaurantItems = req.body;
 
     if (instanceOfRestaurantItem(itemSrc)) {
       const item = await RestaurantItemsService.deleteItem(itemSrc);
@@ -87,6 +94,7 @@ export default class RestaurantItemsControllers {
  * @returns boolean
  */
 
-function instanceOfRestaurantItem(object: any): object is RestaurantItem {
-  return "restaurantID" in object && "item_name" in object;
+function instanceOfRestaurantItem(object: any): object is RestaurantItems {
+  return "restaurant_id" in object && "item_category" &&
+    "price" && "item_name" in object;
 }

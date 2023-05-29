@@ -34,7 +34,7 @@ export default class UserControllers {
   }
 
   async getUserProfile(req: IReq, res: IRes) {
-    const user:IUser = req.body;
+    const user:IUser = req.user;
     if (instanceOfUser(user)) {
       const userProfie = await UserService.getUser(user);
       return res.status(HttpStatusCodes.OK).json({userProfie});

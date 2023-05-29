@@ -34,7 +34,7 @@ enum AppConstants  {
      */
     DOES_NOT_EXIST = "What you're looking for doesn't exist",
 
-    ITEM_ALREADY_EXISTS = "ITEM ALREADY EXISTS"
+    ITEM_ALREADY_EXISTS = "Item not found or item already in your restaurant menu"
 
 }
 export default AppConstants;

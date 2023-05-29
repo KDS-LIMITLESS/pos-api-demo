@@ -41,4 +41,3 @@ export function instanceOfItem(object: any): object is IItem {
     "item_name" in object && "item_category" in object && "item_price" in object
   );
 }
-// beware ts is not typesafe at runtime perfom some valiation
