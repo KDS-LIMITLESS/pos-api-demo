@@ -3,20 +3,20 @@ import { RestaurantItems } from "../models/restaurantItems";
 import HttpStatusCodes from "../app-constants/HttpStatusCodes";
 import AppConstants from "../app-constants/custom";
 import RestaurantItemsService from "../services/restaurantItems";
-import { IItem } from "../models/items";
+
 
 export default class RestaurantItemsControllers {
+
+
   public async importItem(req: IReq, res: IRes) {
-    // let restaurant_id = req.user.works_at
     const itemSrc: RestaurantItems = req.body;
 
     if (instanceOfRestaurantItem(itemSrc)) {
       const item = await RestaurantItemsService.importItem(
         req.body.restaurant_id, 
         itemSrc, 
-        req.body.price
+        req.body.item_price
       );
-
       res.status(HttpStatusCodes.CREATED).json(item);
     } else {
       res
@@ -26,13 +26,12 @@ export default class RestaurantItemsControllers {
   }
 
   public async getAllItems(req: IReq, res: IRes) {
-    const restaurantID: RestaurantItems['_id'] = req.body.restaurantID;
+    const restaurant_id: RestaurantItems['_id'] = req.body.restaurant_id;
     
-    if (restaurantID) {
+    if (restaurant_id) {
       const items = await RestaurantItemsService.getAllItems(
-        restaurantID
+        restaurant_id
       );
-  
       res.status(HttpStatusCodes.OK).json(items);
     } else {
       res
@@ -43,14 +42,13 @@ export default class RestaurantItemsControllers {
 
 
   public async getItem(req: IReq, res: IRes) {
-    const itemSrc: IItem[] = req.body;
+    const itemSrc: RestaurantItems = req.body;
 
     if (instanceOfRestaurantItem(itemSrc)) {
       const item = await RestaurantItemsService.getItem(
         req.body.restaurant_id,
         itemSrc
       );
-
       res.status(HttpStatusCodes.OK).json(item);
     } else {
       res
@@ -63,7 +61,10 @@ export default class RestaurantItemsControllers {
     const itemSrc: RestaurantItems = req.body;
 
     if (instanceOfRestaurantItem(itemSrc) && "item_price" in itemSrc) {
-      const item = await RestaurantItemsService.updateItemPrice(itemSrc);
+      const item = await RestaurantItemsService.updateItemPrice(
+        req.body.restaurant_id,
+        itemSrc
+      );
 
       res.status(HttpStatusCodes.CREATED).json(item);
     } else {
@@ -77,8 +78,10 @@ export default class RestaurantItemsControllers {
     const itemSrc: RestaurantItems = req.body;
 
     if (instanceOfRestaurantItem(itemSrc)) {
-      const item = await RestaurantItemsService.deleteItem(itemSrc);
-
+      const item = await RestaurantItemsService.deleteItem(
+        req.body.restaurant_id,
+        itemSrc
+      );
       res.status(HttpStatusCodes.CREATED).json(item);
     } else {
       res
@@ -96,5 +99,5 @@ export default class RestaurantItemsControllers {
 
 function instanceOfRestaurantItem(object: any): object is RestaurantItems {
   return "restaurant_id" in object && "item_category" &&
-    "price" && "item_name" in object;
+    "item_price" && "item_name" in object;
 }

@@ -1,4 +1,4 @@
-import { IItem, ItemsModel } from "../models/items";
+import { ItemsModel } from "../models/items";
 import {
   RestaurantItemsModel,
   RestaurantItems,
@@ -11,10 +11,14 @@ const _rIM = new RestaurantItemsModel();
 const _iM = new ItemsModel();
 
 
-async function importItem(restaurant_id: string, item:RestaurantItems, price:number): Promise<RestaurantItems> {
+async function importItem(restaurant_id: string, 
+  item:RestaurantItems, price:number): Promise<RestaurantItems>
+{
   let isItem = await _iM.findItem(item.item_name!)
-  let isItemInRestaurant = await getItem(restaurant_id, item)
-
+  let isItemInRestaurant = await _rIM.getItemInRestaurant(
+    restaurant_id, 
+    item
+  )
   if (isItem && !isItemInRestaurant) {
     return  await _rIM.addItemToRestaurant(restaurant_id, isItem, price);
 
@@ -26,39 +30,38 @@ async function importItem(restaurant_id: string, item:RestaurantItems, price:num
   }
 }
 
-async function getAllItems(restaurantID: string): Promise<RestaurantItems | null > {
-  const items: RestaurantItems | null = await _rIM.getAllItems(restaurantID);
-
-  return items;
+async function getAllItems(
+  restaurantID: string): Promise<RestaurantItems | null > 
+{
+  return await _rIM.getAllItems(restaurantID);
 }
 
-async function getItem(restaurant_id: string , item: RestaurantItems): Promise<IItem | null> {
-  const getItem = await _rIM.getItemInRestaurant(
-    restaurant_id, 
-    item
-  );
-  return getItem;
+async function getItem(restaurant_id: string , 
+  item: RestaurantItems): Promise<RestaurantItems| null> 
+{
+  return await _rIM.getItemInRestaurant(restaurant_id, item);
 }
 
-async function updateItemPrice(restaurantItem: RestaurantItems): Promise<IItem> {
-  const item: IItem | null = await _rIM.updateItemPrice(restaurantItem);
-
-  if (item == null) {
+async function updateItemPrice(restaurant_id: string, 
+  restaurantItem: RestaurantItems): Promise<RestaurantItems> 
+{
+  const item = await _rIM.updateItemPrice(restaurant_id, restaurantItem);
+  if (!item) {
     throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);
   }
-
   return item;
 }
 
-async function deleteItem(restaurantItem: RestaurantItems): Promise<Boolean> {
-  const success: Boolean = await _rIM.deleteItem(restaurantItem);
-
+async function deleteItem(restaurant_id: string, 
+  restaurantItem: RestaurantItems): Promise<RestaurantItems> 
+{
+  const success = await _rIM.deleteItem(restaurant_id, restaurantItem);
   if (!success) {
     throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);
   }
-
   return success;
 }
+
 
 export default {
   importItem,
