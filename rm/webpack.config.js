@@ -6,9 +6,6 @@ module.exports = {
   entry: './rm-build/server.js',
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, './'),
+    path: path.resolve(__dirname, 'src'),
   },
-  stats: {
-    errorDetails: true
-  }
 };

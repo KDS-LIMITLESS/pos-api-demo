@@ -23,7 +23,7 @@
     requirement: `restaurant_id`
 
 ## Email Auth APIs
-1.  ~ POST    `/api/sent-otp` - Sends an OTP to a user email after registeration
+1.  ~ POST    `/api/send-otp` - Sends an OTP to a user email after registeration
     requirement - `email`
 2. ~ POST    `/api/resend-otp` - Resends an OTP to a users email
     requirement - `email`
