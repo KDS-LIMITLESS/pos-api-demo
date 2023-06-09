@@ -11,13 +11,17 @@ export default class RestaurantItemsControllers {
   public async importItem(req: IReq, res: IRes) {
     const itemSrc: RestaurantItems = req.body;
 
-    if (instanceOfRestaurantItem(itemSrc)) {
-      const item = await RestaurantItemsService.importItem(
-        req.body.restaurant_id, 
-        itemSrc, 
-        req.body.item_price
-      );
-      res.status(HttpStatusCodes.CREATED).json(item);
+    if (await instanceOfRestaurantItem(itemSrc)) {
+      try {
+        const item = await RestaurantItemsService.importItem(
+          req.body.restaurant_id, 
+          itemSrc, 
+          itemSrc.item_price!
+        );
+        res.status(HttpStatusCodes.CREATED).json(item);
+      } catch(e: any) {
+        res.status(HttpStatusCodes.BAD_REQUEST).json({Error: e.message})
+      }
     } else {
       res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -29,10 +33,14 @@ export default class RestaurantItemsControllers {
     const restaurant_id: RestaurantItems['_id'] = req.body.restaurant_id;
     
     if (restaurant_id) {
-      const items = await RestaurantItemsService.getAllItems(
-        restaurant_id
-      );
-      res.status(HttpStatusCodes.OK).json(items);
+      try {
+        const items = await RestaurantItemsService.getAllItems(
+          restaurant_id
+        );
+        res.status(HttpStatusCodes.OK).json(items);
+      } catch(e: any) {
+        res.status(HttpStatusCodes.BAD_REQUEST).json({Error: e.message})
+      }
     } else {
       res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -44,12 +52,16 @@ export default class RestaurantItemsControllers {
   public async getItem(req: IReq, res: IRes) {
     const itemSrc: RestaurantItems = req.body;
 
-    if (instanceOfRestaurantItem(itemSrc)) {
-      const item = await RestaurantItemsService.getItem(
-        req.body.restaurant_id,
-        itemSrc
-      );
-      res.status(HttpStatusCodes.OK).json(item);
+    if (await instanceOfRestaurantItem(itemSrc)) {
+      try {
+        const item = await RestaurantItemsService.getItem(
+          req.body.restaurant_id,
+          itemSrc
+        );
+        res.status(HttpStatusCodes.OK).json(item);
+      } catch(e: any) {
+        res.status(HttpStatusCodes.BAD_REQUEST).json({Error: e.message})
+      }
     } else {
       res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -60,13 +72,17 @@ export default class RestaurantItemsControllers {
   public async updateItem(req: IReq, res: IRes) {
     const itemSrc: RestaurantItems = req.body;
 
-    if (instanceOfRestaurantItem(itemSrc) && "item_price" in itemSrc) {
-      const item = await RestaurantItemsService.updateItemPrice(
-        req.body.restaurant_id,
-        itemSrc
-      );
-
-      res.status(HttpStatusCodes.CREATED).json(item);
+    if (await instanceOfRestaurantItem(itemSrc) && "item_price" in itemSrc) {
+      try {
+        const item = await RestaurantItemsService.updateItemPrice(
+          req.body.restaurant_id,
+          itemSrc
+        );
+  
+        res.status(HttpStatusCodes.CREATED).json(item);
+      } catch(e: any) {
+        res.status(HttpStatusCodes.BAD_REQUEST).json({Error: e.message})
+      }
     } else {
       res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -77,12 +93,16 @@ export default class RestaurantItemsControllers {
   public async deleteItem(req: IReq, res: IRes) {
     const itemSrc: RestaurantItems = req.body;
 
-    if (instanceOfRestaurantItem(itemSrc)) {
-      const item = await RestaurantItemsService.deleteItem(
-        req.body.restaurant_id,
-        itemSrc
-      );
-      res.status(HttpStatusCodes.CREATED).json(item);
+    if (await instanceOfRestaurantItem(itemSrc)) {
+      try {
+        const item = await RestaurantItemsService.deleteItem(
+          req.body.restaurant_id,
+          itemSrc
+        );
+        res.status(HttpStatusCodes.OK).json(item);
+      } catch(e: any) {
+        res.status(HttpStatusCodes.BAD_REQUEST).json({Error: e.message})
+      }
     } else {
       res
         .status(HttpStatusCodes.BAD_REQUEST)
@@ -97,7 +117,8 @@ export default class RestaurantItemsControllers {
  * @returns boolean
  */
 
-function instanceOfRestaurantItem(object: any): object is RestaurantItems {
-  return "restaurant_id" in object && "item_category" &&
-    "item_price" && "item_name" in object;
+async function instanceOfRestaurantItem(object: RestaurantItems): Promise<boolean> {
+  return "restaurant_id" in object && typeof(object.restaurant_id) === 'string' &&
+  "item_price" in object && typeof(object.item_price) === 'number' &&
+  "item_name" in object && typeof(object.item_name) === 'string';
 }

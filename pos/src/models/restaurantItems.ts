@@ -59,7 +59,6 @@ export class RestaurantItemsModel {
   async getItemInRestaurant(restaurant_id: string, 
     rItem: RestaurantItems): Promise<RestaurantItems | null> 
   {
-    console.log(rItem)
     return await RestaurantItemsCollection.findOne(
       {$and:[
         {_id: restaurant_id}, 
