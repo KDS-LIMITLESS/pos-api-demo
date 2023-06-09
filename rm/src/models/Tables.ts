@@ -13,7 +13,7 @@ class CreateTable {
       phone_number VARCHAR,
       full_name VARCHAR NOT NULL,
       status VARCHAR DEFAULT 'PENDING',
-      works_at VARCHAR NOT NULL REFERENCES restaurants(business_name) ON DELETE CASCADE,
+      works_at VARCHAR NOT NULL REFERENCES restaurants(restaurant_id) ON DELETE CASCADE,
       user_otp VARCHAR,
       created_at TIMESTAMP DEFAULT now()
     )`);

@@ -43,8 +43,8 @@ async function login(user:IUser) {
     return tokens.generateToken(
       isValidUserPassword.username, 
       isValidUserPassword.role,
-      isValidUserPassword.works_at,
-      isValidUserPassword.status
+      isValidUserPassword.status,
+      isValidUserPassword.works_at
     );
   } 
 }

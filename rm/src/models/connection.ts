@@ -14,6 +14,8 @@ export const pool = new Pool({
 
 // tables.createRestaurantTable()
 // tables.createUserTable()
+// tables.dropRestaurantTable()
+// tables.dropUsersTable()
 pool.on('connect', function(client) {
   client.emit(`Connected to database.... ${pool.totalCount} `);
 });

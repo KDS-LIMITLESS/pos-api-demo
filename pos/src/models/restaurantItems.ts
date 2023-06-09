@@ -1,51 +1,41 @@
-import { ItemsCollection, RestaurantItemsCollection } from "./collections";
-import { RestaurantItem } from "./types";
+import { RestaurantItemsCollection } from "./collections";
+// import { RestaurantItem } from "./types";
 import { IItem } from "./items";
 
-export interface RestaurantItems {
+
+export interface RestaurantItems extends Partial<IItem>   {
   _id: string;
   items: IItem[];
 }
 
 export class RestaurantItemsModel {
+
+
   /**
-        Create a new RestaurantItems 
-        @param: restaurantID
-        @returns RestaurantItems 
-    */
-  async createRestaurantItems(restaurantID: string): Promise<RestaurantItems> {
+    Create a new RestaurantItems 
+    @param: restaurantID
+    @returns RestaurantItems 
+  */
+  async addItemToRestaurant(restaurant_id: string, item: IItem, 
+    item_price: number): Promise<any> 
+  {
+    let itemsData: IItem = {
+      item_name: item.item_name!,
+      item_category: item.item_category!,
+      item_price: item_price
+    }
+
     const newRestaurantItems: RestaurantItems = {
-      _id: restaurantID,
-      items: [],
+      _id:  restaurant_id,
+      items: [itemsData]
     };
-    await RestaurantItemsCollection.insertOne(newRestaurantItems);
-    return newRestaurantItems;
-  }
 
-  /**
-        gets an Item from the Items model
-        @param: item_name
-        @returns Item
-    */
-
-  async getItemFromItems(item_name: string): Promise<IItem> {
-    const item: IItem | null = await ItemsCollection.findOne({
-      item_name: item_name,
-    });
-    return item!;
-  }
-
-  /**
-        import an Item
-        @param: item_name, item_price, restaurantID
-        @returns Item
-    */
-  async importItem(newItem: IItem, restaurantID: string): Promise<IItem> {
-    await RestaurantItemsCollection.findOneAndUpdate(
-      { _id: restaurantID },
-      { $push: { items: newItem } }
-    );
-    return newItem;
+    const items = await RestaurantItemsCollection.findOneAndUpdate(
+      {_id: restaurant_id},
+      {$push: {'items':  newRestaurantItems.items[0]}},
+      {upsert: true}
+    )
+    return items.value
   }
 
   /**
@@ -54,74 +44,64 @@ export class RestaurantItemsModel {
         @returns Items Array
     */
 
-  async getAllItems(restaurantID: string): Promise<RestaurantItems | null> {
+  async getAllItems(restaurant_id: string): Promise<RestaurantItems | null> {
     const restaurantItems: RestaurantItems | null =
-      await RestaurantItemsCollection.findOne({ _id: restaurantID });
-
-    if (!restaurantItems){
-      return null;
-    }
+      await RestaurantItemsCollection.findOne({ _id: restaurant_id });
     return restaurantItems;
   }
 
   /**
-        get an item in a particular restaurant
-        @param: restaurantID, item_name
-        @returns Item 
-    */
+    get an item in a particular restaurant
+    @param: restaurantID, item_name
+    @returns Item 
+  */
 
-  async getItem(restaurantItem: RestaurantItem): Promise<IItem | null> {
-    const restaurantItems: RestaurantItems | null =
-      await RestaurantItemsCollection.findOne({
-        _id: restaurantItem.restaurantID,
-      });
-
-    if (!restaurantItems) {
-      return null;
-    }
-
-    const item: IItem | undefined = restaurantItems.items.find((item) => {
-      return item.item_name == restaurantItem.item_name;
-    });
-    return item!;
+  async getItemInRestaurant(restaurant_id: string, 
+    rItem: RestaurantItems): Promise<RestaurantItems | null> 
+  {
+    return await RestaurantItemsCollection.findOne(
+      {$and:[
+        {_id: restaurant_id}, 
+        {'items': {$elemMatch: {'item_name': rItem.item_name}}}
+      ]},
+      {projection: {'items': {$elemMatch: {'item_name': rItem.item_name}}}}
+    );
   }
 
   /**
         update an item price in a particular restaurant
-        @param: restaurantID, item_name, new_price
-        @returns Item 
+        @param: restaurant_id, item_name, item_price
+        @returns boolean
     */
 
-  async updateItemPrice(restaurantItem: RestaurantItem): Promise<IItem> {
+  async updateItemPrice(restaurant_id: string, 
+    restaurant: RestaurantItems): Promise<RestaurantItems | null> 
+  {
     const result = await RestaurantItemsCollection.findOneAndUpdate(
-      {
-        _id: restaurantItem.restaurantID,
-        "items.item_name": restaurantItem.item_name,
-      },
-      { $set: { "items.$.item_price": restaurantItem.item_price } }
+      {_id: restaurant_id, "items.item_name": restaurant.item_name},
+      { $set: { 'items.$.item_price': restaurant.item_price}},
+      {returnDocument: "after"}
     );
-
-    const updatedItem: IItem | undefined = result.value?.items.find(
-      (item) => item.item_name === restaurantItem.item_name
-    );
-
-    return updatedItem!;
+    return result.value;
   }
 
   /**
-        delete an item in a particular restaurant
-        @param: restaurantID, item_name
-        @returns Boolean 
-    */
+    delete an item in a particular restaurant
+    @param: restaurantID, item_name
+    @returns Boolean 
+  */
 
-  async deleteItem(restaurantItem: RestaurantItem): Promise<boolean> {
-    const result = await RestaurantItemsCollection.findOneAndDelete({
-      _id: restaurantItem.restaurantID,
-      "items.item_name": restaurantItem.item_name,
-    });
-    if (result.ok === 1 && result.value) {
-      return true;
-    }
-    return false;
+  async deleteItem(restaurant_id: string, 
+    restaurant: RestaurantItems): Promise<RestaurantItems | null> 
+  {
+    let arr: string[] = []
+    arr.push(restaurant.item_name!)
+
+    const result = await RestaurantItemsCollection.findOneAndUpdate(
+      {_id: restaurant_id, "items.item_name": restaurant.item_name}, 
+      {$pull: {"items": {'item_name': restaurant.item_name}}},
+      {returnDocument: "after"}
+    );
+    return result.value;
   }
 }

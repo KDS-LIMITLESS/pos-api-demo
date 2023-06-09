@@ -1,73 +1,67 @@
-import { IItem } from "../models/items";
+import { ItemsModel } from "../models/items";
 import {
   RestaurantItemsModel,
   RestaurantItems,
 } from "../models/restaurantItems";
-import { RestaurantItem } from "../models/types";
 import { LogError } from "../utils/errors";
 import HttpStatusCodes from "../app-constants/HttpStatusCodes";
 import AppConstants from "../app-constants/custom";
 
 const _rIM = new RestaurantItemsModel();
+const _iM = new ItemsModel();
 
-async function importItem(newItem: RestaurantItem): Promise<IItem> {
-  let restaurantItems: RestaurantItems | null = await _rIM.getAllItems(
-    newItem.restaurantID
-  );
 
-  if (restaurantItems == null) {
-    restaurantItems = await _rIM.createRestaurantItems(newItem.restaurantID);
+async function importItem(restaurant_id: string, 
+  item:RestaurantItems, price:number): Promise<RestaurantItems>
+{
+  let isItem = await _iM.findItem(item.item_name!)
+  let isItemInRestaurant = await _rIM.getItemInRestaurant(
+    restaurant_id, 
+    item
+  )
+  if (isItem && !isItemInRestaurant) {
+    return  await _rIM.addItemToRestaurant(restaurant_id, isItem, price);
+
+  } else {
+    throw new LogError(
+      HttpStatusCodes.NOT_FOUND, 
+      AppConstants.ITEM_ALREADY_EXISTS
+    );
   }
-
-  const item: IItem = await _rIM.getItemFromItems(newItem.item_name);
-
-  if (item == null) {
-    throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);
-  }
-
-  const importedItem = await _rIM.importItem(item, newItem.restaurantID);
-  return importedItem;
 }
 
-async function getAllItems(restaurantID: string): Promise<RestaurantItems> {
-  const items: RestaurantItems | null = await _rIM.getAllItems(restaurantID);
-
-  if (items == null) {
-    throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);
-  }
-
-  return items;
+async function getAllItems(
+  restaurantID: string): Promise<RestaurantItems | null > 
+{
+  return await _rIM.getAllItems(restaurantID);
 }
 
-async function getItem(restaurantItem: RestaurantItem): Promise<IItem> {
-  const item: IItem | null = await _rIM.getItem(restaurantItem);
+async function getItem(restaurant_id: string , 
+  item: RestaurantItems): Promise<RestaurantItems| null> 
+{
+  return await _rIM.getItemInRestaurant(restaurant_id, item);
+}
 
-  if (item == null) {
+async function updateItemPrice(restaurant_id: string, 
+  restaurantItem: RestaurantItems): Promise<RestaurantItems> 
+{
+  const item = await _rIM.updateItemPrice(restaurant_id, restaurantItem);
+  if (!item) {
     throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);
   }
-
   return item;
 }
 
-async function updateItemPrice(restaurantItem: RestaurantItem): Promise<IItem> {
-  const item: IItem | null = await _rIM.updateItemPrice(restaurantItem);
-
-  if (item == null) {
-    throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);
-  }
-
-  return item;
-}
-
-async function deleteItem(restaurantItem: RestaurantItem): Promise<Boolean> {
-  const success: Boolean = await _rIM.deleteItem(restaurantItem);
-
+async function deleteItem(restaurant_id: string, 
+  restaurantItem: RestaurantItems): Promise<RestaurantItems> 
+{
+  const success = await _rIM.deleteItem(restaurant_id, restaurantItem);
   if (!success) {
     throw new LogError(HttpStatusCodes.NOT_FOUND, AppConstants.DOES_NOT_EXIST);
   }
-
   return success;
 }
+
 
 export default {
   importItem,

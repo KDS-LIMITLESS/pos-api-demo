@@ -29,7 +29,7 @@ async function getAllItems(): Promise<IItem[]> {
 }
 
 async function getItem(item_name : IItem['item_name']): Promise<IItem> {
-    const item : IItem | null = await _iM.getItem(item_name);
+    const item : IItem | null = await _iM.findItem(item_name);
 
     if (item == null) {
         throw new LogError(

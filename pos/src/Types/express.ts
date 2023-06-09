@@ -1,7 +1,9 @@
 import * as e from 'express';
 
-export interface IReq<T = any> extends e.Request {
-    body: T   
+
+export interface IReq<T = any, U = any> extends e.Request  {
+    body: T
+    user?: U
 }
 
 
