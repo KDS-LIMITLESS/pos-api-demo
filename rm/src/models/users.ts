@@ -2,6 +2,7 @@ import { pool as db } from './connection';
 import SQL from 'sql-template-strings';
 import bcrypt from 'bcrypt';
 
+
 export enum UserRoles {
   Owner,
   Manager,
@@ -9,19 +10,24 @@ export enum UserRoles {
   Waiter
 }
 
+type Status = 'SUSPENDED' | 'ACTIVE' | 'PENDING'
+
 export interface IUser {
   username: string,
   full_name: string,
   phone_number: string,
   email: string,
   password: string,
-  role:  string,// 'Owner'|'Manager'|'Admin'|'Waiter',
+  role:  UserRoles,
   works_at: string,
-  status: 'SUSPENDED' | 'ACTIVE' | 'PENDING',
+  status: Status
   user_otp? : string,
   created_at: Date
 } 
 
+async function checkUserRole(role:string): Promise<string | null> {
+  return role in UserRoles ? role : null
+}
 
 export class UserModel{
 
@@ -30,7 +36,8 @@ export class UserModel{
   * @param user full_name,email,password,role
   * @returns user
   */
-  async newUser(user: IUser): Promise<IUser>{
+  async addUser(user: IUser): Promise<IUser>{
+    const role = await checkUserRole(user.role as unknown as string)
     const pwdHash = await bcrypt.hash(user.password, 12);
     const { rows } = await db.query(SQL `INSERT INTO 
       users(
@@ -48,7 +55,7 @@ export class UserModel{
         ${user.phone_number},
         ${user.email}, 
         ${pwdHash}, 
-        ${UserRoles[0]},
+        ${role},
         ${user.works_at}
       )`
     );
