@@ -50,6 +50,12 @@ export default class RestaurantControllers {
     const success = await RestaurantService.deleteRestaurant(id);
     if (success) res.sendStatus(HttpStatusCodes.NO_CONTENT);
   }
+
+  async addUser(req:IReq, res:IRes) {
+    let { role, email, restaurant_id } = req.body
+    await RestaurantService.sendRegisterationURL(email, restaurant_id, role )
+    res.status(200).json({message: 'Registeration link has been sent to users email'});
+  }
 }
 
 /**

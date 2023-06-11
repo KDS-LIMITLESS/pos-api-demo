@@ -3,7 +3,7 @@ import { LogError } from '../utils/errors';
 import HttpStatusCodes from '../app-constants/HttpStatusCodes';
 import AppConstants from '../app-constants/custom';
 import tokens from '../middlewares/tokens';
-import { sendVerificationOTP, generateUniqueIDs } from '../utils/mail';
+import mail from '../utils/mail';
 
 
 
@@ -78,9 +78,9 @@ async function updateUser(user:IUser) {
 }
 
 async function sendOTP(user:IUser) {
-  const otp = await generateUniqueIDs(AppConstants.OTP_CHARS);
+  const otp = await mail.generateUniqueIDs(AppConstants.OTP_CHARS);
   await _uM.setuserOTP(otp, user);
-  const message = await sendVerificationOTP(user.email, otp, 'OTP VERIFICATION');
+  const message = await mail.sendVerificationOTP(user.email, otp, 'OTP VERIFICATION');
   if (message.Message === 'OK') return message;
   throw new LogError(
     HttpStatusCodes.INTERNAL_SERVER_ERROR, 
