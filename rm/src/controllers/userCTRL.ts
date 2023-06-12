@@ -10,11 +10,18 @@ export default class UserControllers {
 
   async createUser (req:IReq, res: IRes) {
     const user:IUser = req.body;
-    if (instanceOfUser(user)){
-      await UserService.registerUser(user);
-		  return res.status(HttpStatusCodes.OK).json({user});
-	  }
-    res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
+    if (await instanceOfUser(user)){
+
+      try {
+        await UserService.registerUser(user);
+		    return res.status(HttpStatusCodes.OK).json({user});
+      } catch (e: any){
+        res.status(HttpStatusCodes.BAD_REQUEST).json({"Error": e.message})
+      }
+      
+	  } else {
+      res.status(HttpStatusCodes.BAD_REQUEST).json(AppConstants.BAD_INPUT_FILED);
+    }
   }
 
   async login (req:IReq, res:IRes) {
@@ -26,7 +33,7 @@ export default class UserControllers {
 
   async updateUserProfile(req: IReq, res: IRes) {
     let user:IUser = req.body;
-    if (instanceOfUser(user)) {
+    if (await instanceOfUser(user)) {
       user = await UserService.updateUser(user);
       return res.status(HttpStatusCodes.OK).json({user});
     }
@@ -35,7 +42,7 @@ export default class UserControllers {
 
   async getUserProfile(req: IReq, res: IRes) {
     const user:IUser = req.user;
-    if (instanceOfUser(user)) {
+    if (await instanceOfUser(user)) {
       const userProfie = await UserService.getUser(user);
       return res.status(HttpStatusCodes.OK).json({userProfie});
     }
@@ -44,7 +51,7 @@ export default class UserControllers {
 
   async suspendUserAccount(req:IReq, res: IRes) {
     const user:IUser = req.body;
-    if (instanceOfUser(user)) {
+    if (await instanceOfUser(user)) {
       const userAccount= await UserService.setUserStatus('SUSPENDED', user);
       return res.status(HttpStatusCodes.OK).json({userAccount});
     }
@@ -78,14 +85,14 @@ export default class UserControllers {
  * @param object object payload to check against the interface
  * @returns boolean
  */
-function instanceOfUser(object: any): object is IUser {
+async function instanceOfUser(object: IUser): Promise<boolean> {
   return (
-    'email' in object && 
-    'username' in object && 
-    'full_name' in object &&
-    'phone_number' in object &&
-    'role' in object && 
-    'password' in object &&
-    'works_at' in object
+    typeof(object.email) === 'string' && object.email !== "" &&
+    typeof(object.full_name) === 'string' && object.full_name !== "" &&
+    typeof(object.password) === 'string' && object.password !== "" &&
+    typeof(object.phone_number) === 'string' && object.phone_number !== "" &&
+    typeof(object.role) === 'string' && 
+    typeof(object.username) === 'string' && object.username !== "" &&
+    typeof (object.works_at) === 'string' && object.works_at !== ""
   );
 }

@@ -6,6 +6,7 @@ import {
 import { LogError } from '../utils/errors';
 import HttpStatusCodes from '../app-constants/HttpStatusCodes';
 import AppConstants from '../app-constants/custom';
+import mail from '../utils/mail';
 
 const _rM = new RestaurantModel();
 
@@ -60,11 +61,23 @@ Promise<boolean> {
   return (status);
 }
 
+async function sendRegisterationURL(email:string, rid: string, role: string) {
+  const business_name = await _rM.getRestaurantName(rid)
+  console.log(business_name)
+  const message = await mail.sendUserRegistrationURL(email, rid, role, `${business_name}`);
+  if (message.Message === 'OK') return message;
+  throw new LogError(
+    HttpStatusCodes.INTERNAL_SERVER_ERROR, 
+    AppConstants.SERVER_ERROR
+  );
+}
+
 
 export default  {
   createRestaurant,
   getRestaurant,
   updateRestaurant,
-  deleteRestaurant
+  deleteRestaurant,
+  sendRegisterationURL
 } as const;
 

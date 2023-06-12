@@ -118,5 +118,13 @@ export class RestaurantModel {
     return rows[0];
   }
 
+  async getRestaurantName(restaurant_id: string): Promise<string> {
+    const {rows} = await db.query(`SELECT business_name FROM restaurants
+      WHERE restaurant_id = $1`,
+      [restaurant_id]
+    );
+    return rows[0]['business_name'];
+  }
+
   // MULTI STORE RETAURANT
 }

@@ -3,7 +3,7 @@ import { LogError } from '../utils/errors';
 import HttpStatusCodes from '../app-constants/HttpStatusCodes';
 import AppConstants from '../app-constants/custom';
 import tokens from '../middlewares/tokens';
-import { sendVerificationOTP, generateUniqueIDs } from '../utils/mail';
+import mail from '../utils/mail';
 
 
 
@@ -15,7 +15,7 @@ async function registerUser(user:IUser): Promise<any>{
       HttpStatusCodes.BAD_REQUEST, 
       AppConstants.USER_EXISTS);
   }
-  await _uM.newUser(user);
+  await _uM.addUser(user);
   return user;
 }
 
@@ -42,7 +42,7 @@ async function login(user:IUser) {
   } else {
     return tokens.generateToken(
       isValidUserPassword.username, 
-      isValidUserPassword.role,
+      isValidUserPassword.role as unknown as string,
       isValidUserPassword.status,
       isValidUserPassword.works_at
     );
@@ -52,7 +52,6 @@ async function login(user:IUser) {
 async function setUserStatus(status:IUser['status'], user:IUser) {
   return await _uM.updateUserStatus(status, user);
 }
-  
 
 async function deletUser(user:IUser) {
   if (!(await _uM.isUserExist(user))) {
@@ -79,18 +78,16 @@ async function updateUser(user:IUser) {
 }
 
 async function sendOTP(user:IUser) {
-  const otp = await generateUniqueIDs(AppConstants.OTP_CHARS);
-  console.log(otp);
+  const otp = await mail.generateUniqueIDs(AppConstants.OTP_CHARS);
   await _uM.setuserOTP(otp, user);
-  const message = await sendVerificationOTP(user.email, otp, 'OTP VERIFICATION');
+  const message = await mail.sendVerificationOTP(user.email, otp, 'OTP VERIFICATION');
   if (message.Message === 'OK') return message;
   throw new LogError(
     HttpStatusCodes.INTERNAL_SERVER_ERROR, 
     AppConstants.SERVER_ERROR
   );
-  
 }
-// HOW WILL THE FRONT END GET USER EMAIL
+
 async function verifyUserOTP(user:IUser) {
   const getOTP = await _uM.getUserOTP(user);
   if (getOTP === user.user_otp ) {
